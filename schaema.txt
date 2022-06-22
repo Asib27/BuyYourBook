@@ -1,0 +1,68 @@
+Users(
+	user_id PRIMARY KEY,
+	username ,
+	name ,
+	email,
+	password_hash,
+	location_id FOREIGN KEY REFERENCES Location(location_id)
+)
+
+Authors(
+	author_id PRIMARY KEY,
+	name,
+	email
+)
+
+Location(
+	location_id PRIMARY KEY,
+	district, 
+	desc,
+	longitude,
+	latitude
+)
+
+Publications(
+	publication_id PRIMARY KEY
+	name,
+	location_id FOREIGN KEY REFERENCES Location(location_id)
+)
+
+Books(
+	isbn PRIMARY KEY,
+	name,
+	edition,
+	language,
+	genre,
+	price,
+	quantity_available
+)
+
+Follows(
+	follower_id FOREIGN_KEY REFERENCES users(user_id),
+	followed_id FOREIGN_KEY REFERENCES users(user_id),
+	PRIMARY KEY(follower_id, followed_id)
+)
+
+Author_of_book(
+	isbn FOREIGN KEY REFERENCES Books(isbn),
+	author_id FOREIGN KEY REFERENCES Authors(author_id),
+	publication_id FOREIGN KEY REFERENCES Publications(publication_id)
+	PRIMARY KEY(isbn, author_id, publication_id)
+)
+
+Transaction(
+	Tx_id PRIMARY KEY,
+	isbn FOREIGN KEY REFERENCES Books(isbn),
+	user_id FOREIGN KEY REFERENCES Users(user_id),
+	location_id FOREIGN KEY REFERENCES Locations(location_id),
+	price,
+	payment_method
+)
+
+Reviews(
+	review_id PRIMARY KEY,
+	user_id FOREIGN KEY REFERENCES Users(user_id),
+	rating,
+	downvotes,
+	upvotes
+)
