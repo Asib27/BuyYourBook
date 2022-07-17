@@ -1,0 +1,24 @@
+security    : Spring Security & Security Objects are implemented here.
+    jwt:
+        AuthEntryPointJwt   : implements AuthenticationEntryPoint
+        AuthTokenFilter     : extends OncePerRequestFilter
+        JwtUtils            : provides methods for generating, parsing, validating JWT
+
+    services:
+        WebSecurityConfig       : extends WebSecurityConfigurerAdapter
+        UserDetailsServiceImpl  : implements UserDetailsService
+        UserDetailsImpl         : implements UserDetails
+
+controllers : handle signup/login requests & authorized requests.
+    AuthController  : @PostMapping(‘/signin’), @PostMapping(‘/signup’)
+    TestController  : @GetMapping(‘/api/test/all’), @GetMapping(‘/api/test/[role]’)
+
+repository  : has intefaces that extend Spring Data JPA JpaRepository to interact with PostgreSQL Database.
+    UserRepository  : extends JpaRepository<User, Long>
+    RoleRepository  : extends JpaRepository<Role, Long>
+
+models      : defines two main models for Authentication (User) & Authorization (Role). They have many-to-many relationship.
+    User    : id, username, email, password, roles
+    Role    : id, name
+
+payload     : defines classes for Request and Response objects
