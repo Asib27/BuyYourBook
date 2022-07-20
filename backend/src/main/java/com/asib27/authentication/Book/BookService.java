@@ -16,11 +16,15 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public void addNewBook(Book book) {
-        bookRepository.save(book);
-    }
+    public Book addNewBook(Book book) {
+        return bookRepository.save(book);
 
+    }
     public void deleteBook(Long bookId) {
         bookRepository.deleteById(bookId);
+    }
+
+    public Book getBook(Long bookId) {
+        return bookRepository.findById(bookId).get();
     }
 }

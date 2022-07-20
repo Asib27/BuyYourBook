@@ -1,7 +1,12 @@
 package com.asib27.authentication.Book;
 
 
+import com.asib27.authentication.Writer.Writer;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Table(name = "books")
 @Entity
@@ -51,8 +56,15 @@ public class Book {
             name = "quantity_available",
             nullable = false
     )
-
     private int quantity_available;
+
+
+    @ManyToMany
+    @JoinTable(name = "authorOfBooks",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Writer> writersOfTheBook = new HashSet<>();
 
     public Book() {
     }
@@ -138,6 +150,12 @@ public class Book {
         this.quantity_available = quantity_available;
     }
 
+    public Set<Writer> getWritersOfTheBook() {
+        return writersOfTheBook;
+    }
 
 
+    public void addWriters(Writer writer) {
+        writersOfTheBook.add(writer);
+    }
 }
