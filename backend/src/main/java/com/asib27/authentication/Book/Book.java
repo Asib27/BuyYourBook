@@ -1,6 +1,7 @@
 package com.asib27.authentication.Book;
 
 
+import com.asib27.authentication.Publisher.Publisher;
 import com.asib27.authentication.Writer.Writer;
 
 import javax.persistence.*;
@@ -65,6 +66,13 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     private Set<Writer> writersOfTheBook = new HashSet<>();
+
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "publisher_id", referencedColumnName = "id")
+    private Publisher publisher;
+
+
 
     public Book() {
     }
@@ -157,5 +165,12 @@ public class Book {
 
     public void addWriters(Writer writer) {
         writersOfTheBook.add(writer);
+    }
+
+    public void addPublisher(Publisher publisher) {
+        this.publisher = publisher;
+    }
+    public Publisher getPublisher() {
+        return publisher;
     }
 }

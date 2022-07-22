@@ -1,5 +1,7 @@
 package com.asib27.authentication.Book;
 
+import com.asib27.authentication.Publisher.Publisher;
+import com.asib27.authentication.Publisher.PublisherService;
 import com.asib27.authentication.Writer.Writer;
 import com.asib27.authentication.Writer.WriterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ public class BookController {
     BookService bookService;
     @Autowired
     WriterService writerService;
+    @Autowired
+    PublisherService publisherService;
 
     @GetMapping("/getAllBooks")
     public List<Book> getAllBooks(){
@@ -41,5 +45,12 @@ public class BookController {
         return bookService.addNewBook(book);
 
     }
-}
 
+    @PutMapping("/{bookId}/published_by/{publisherId}")
+    public Book publishersOfBook(@PathVariable Long bookId, @PathVariable Long publisherId){
+        Book book = bookService.getBook(bookId);
+        Publisher publisher = publisherService.getPublisher(publisherId);
+        book.addPublisher(publisher);
+        return bookService.addNewBook(book);
+    }
+}
