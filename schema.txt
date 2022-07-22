@@ -65,3 +65,13 @@ Reviews(
 	downvotes,
 	upvotes
 )
+
+Cart(
+	cart_id PRIMARY KEY,
+	user_id FOREIGN KEY
+)
+
+CartBook(
+	cart_id FOREIGN KEY
+	user_id FOREIGN KEY
+)
