@@ -2,7 +2,6 @@ import * as React from 'react';
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
@@ -10,14 +9,14 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import { Paper, Rating, Stack } from '@mui/material';
+import { Rating, Stack } from '@mui/material';
+import commentService from '../services/comment.service';
 
 const VOTE_TYPE = {
   UP: 1,
@@ -73,14 +72,19 @@ const CardheadSubheader = (props) =>{
 }
 
 export default function CommentCard(props) {
+  if(props.comment_id === undefined) {
+    console.log('comment id is not passed in props');
+  }
+
+  const commentInfo = commentService.getComment(props.comment_id);
   
-  const rating = 3; // API
-  const commentDate = "September 14, 2016"; // API
-  const commentAuthor = "Lores Ipsum"
+  const rating = commentInfo.rating; // API
+  const commentDate = commentInfo.date; // API
+  const commentAuthor = commentInfo.author;
   const [expanded, setExpanded] = React.useState(false);
-  const [totalVote, setTotalVote] = React.useState(152); // API
+  const [totalVote, setTotalVote] = React.useState(commentInfo.total_vote); // API
   //saves 1 for upvote, 0 for no vote, -1 for downvote
-  const [voteStatus, setVoteStatus] = React.useState(0); // API
+  const [voteStatus, setVoteStatus] = React.useState(commentInfo.givenVote); // API
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -116,15 +120,17 @@ export default function CommentCard(props) {
         setVoteStatus(VOTE_TYPE.DOWN);
       }
     }
+
+    commentService.setTotalVote(totalVote);
+    commentService.setVoteStatus(voteStatus);
   }
 
-  if(props && props.flag && props.flag === false) return (<div></div>);
   return (
     <ThemeProvider theme={theme}>
         <Card sx={{ maxWidth: 1000 }}>
         <CardHeader
             avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="author">
                 {commentAuthor.charAt(0)}
             </Avatar>
             }
@@ -141,9 +147,7 @@ export default function CommentCard(props) {
         />
         <CardContent>
             <Typography variant="body2" color="text.secondary">
-            This impressive paella is a perfect party dish and a fun meal to cook
-            together with your guests. Add 1 cup of frozen peas along with the mussels,
-            if you like.
+              {commentInfo.comment_text}
             </Typography>
         </CardContent>
         <CardActions disableSpacing>
@@ -181,7 +185,7 @@ export default function CommentCard(props) {
             </ExpandMore>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CommentCard flag={true}/>
+            {/* <CommentCard flag={true}/> */}
         </Collapse>
         </Card>
     </ThemeProvider>
