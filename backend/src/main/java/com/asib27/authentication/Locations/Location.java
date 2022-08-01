@@ -2,6 +2,7 @@ package com.asib27.authentication.Locations;
 
 
 import com.asib27.authentication.Publisher.Publisher;
+import com.asib27.authentication.UserCloned.UserCloned;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -55,6 +56,11 @@ public class Location {
     @OneToMany(mappedBy = "location")
     private Set<Publisher> publishersInLocation = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "location")
+    private Set<UserCloned> usersInLocation = new HashSet<>();
+
+
     public Long getId() {
         return id;
     }
@@ -90,4 +96,9 @@ public class Location {
     public Set<Publisher> getPublishersInLocation() {
         return publishersInLocation;
     }
+
+    public Set<UserCloned> getUsersInLocation() {
+        return usersInLocation;
+    }
+
 }

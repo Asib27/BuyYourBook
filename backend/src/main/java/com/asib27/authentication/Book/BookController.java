@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/api/book")
 public class BookController {
 
     @Autowired
@@ -20,33 +20,34 @@ public class BookController {
     @Autowired
     PublisherService publisherService;
 
-    @GetMapping("/getAllBooks")
+    @GetMapping("/get")
     public List<Book> getAllBooks(){
         return bookService.getAllBooks();
     }
 
-    @PostMapping("/addbook")
+    @PostMapping("/add")
     public String addNewBook(@RequestBody Book book){
         bookService.addNewBook(book);
         return "New book added";
     }
 
-    @DeleteMapping(path = "/deleteBook/{bookId}")
+    @DeleteMapping(path = "/delete/{bookId}")
     public String deleteBook(@PathVariable("bookId") Long bookId){
         bookService.deleteBook(bookId);
         return "Book with id "+ bookId + " is deleted.";
     }
 
-    @PutMapping("/{bookId}/writer/{writerId}")
+    @PutMapping("/add/{bookId}/writer/{writerId}")
     public Book authorsOfBook(@PathVariable Long bookId, @PathVariable Long writerId){
         Book book = bookService.getBook(bookId);
         Writer writer = writerService.getAWriter(writerId);
         book.addWriters(writer);
         return bookService.addNewBook(book);
-
     }
 
-    @PutMapping("/{bookId}/published_by/{publisherId}")
+
+
+    @PutMapping("/add/{bookId}/published_by/{publisherId}")
     public Book publishersOfBook(@PathVariable Long bookId, @PathVariable Long publisherId){
         Book book = bookService.getBook(bookId);
         Publisher publisher = publisherService.getPublisher(publisherId);

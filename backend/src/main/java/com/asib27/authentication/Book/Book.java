@@ -1,8 +1,11 @@
 package com.asib27.authentication.Book;
 
 
+import com.asib27.authentication.Cart.Cart;
 import com.asib27.authentication.Publisher.Publisher;
 import com.asib27.authentication.Writer.Writer;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -72,7 +75,9 @@ public class Book {
     @JoinColumn(name = "publisher_id", referencedColumnName = "id")
     private Publisher publisher;
 
-
+    @JsonIgnore
+    @ManyToMany(mappedBy = "cartBooks")
+    private Set<Cart>bookInCarts = new HashSet<>();
 
     public Book() {
     }
@@ -165,6 +170,10 @@ public class Book {
 
     public void addWriters(Writer writer) {
         writersOfTheBook.add(writer);
+    }
+
+    public void addToCart(Cart cart){
+        bookInCarts.add(cart);
     }
 
     public void addPublisher(Publisher publisher) {
