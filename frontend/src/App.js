@@ -9,7 +9,7 @@ import ReviewPage from './pages/reviewPage';
 function App() {
   return (
     <div className="App">
-      
+      <NavigationBar/>
       <Routes>
         <Route path='/' element={<Hello/>}/>
         <Route path='/signin' element={<SignIn/>}/>
