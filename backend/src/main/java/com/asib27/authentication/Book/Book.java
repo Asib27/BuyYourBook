@@ -3,6 +3,7 @@ package com.asib27.authentication.Book;
 
 import com.asib27.authentication.Cart.Cart;
 import com.asib27.authentication.Publisher.Publisher;
+import com.asib27.authentication.Transaction.Transaction;
 import com.asib27.authentication.Writer.Writer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -78,6 +79,10 @@ public class Book {
     @JsonIgnore
     @ManyToMany(mappedBy = "cartBooks")
     private Set<Cart>bookInCarts = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "booksInTransaction")
+    private Set<Transaction>transactionBooks = new HashSet<>();
 
     public Book() {
     }

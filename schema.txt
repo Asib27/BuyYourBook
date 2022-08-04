@@ -51,11 +51,21 @@ Author_of_book(
 
 Transaction(
 	Tx_id PRIMARY KEY,
-	isbn FOREIGN KEY REFERENCES Books(isbn),
 	user_id FOREIGN KEY REFERENCES Users(user_id),
 	location_id FOREIGN KEY REFERENCES Locations(location_id),
+	payment_id FOREIGN KEY REFERENCES Payment(payment_id)
+)
+
+books_in_transaction(
+    Tx-id FOREIGN KEY REFERENCES Transaction(Tx_id),
+    isbn FOREIGN KEY REFERENCES Books(isbn)
+)
+
+Payment(
+	payment_id PRIMARY KEY,
 	price,
-	payment_method
+	mobile_no,
+	payment_type
 )
 
 Reviews(

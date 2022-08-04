@@ -2,6 +2,7 @@ package com.asib27.authentication.Locations;
 
 
 import com.asib27.authentication.Publisher.Publisher;
+import com.asib27.authentication.Transaction.Transaction;
 import com.asib27.authentication.UserCloned.UserCloned;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -59,6 +60,10 @@ public class Location {
     @JsonIgnore
     @OneToMany(mappedBy = "location")
     private Set<UserCloned> usersInLocation = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "location")
+    private Set<Transaction> transactionLocations = new HashSet<>();
 
 
     public Long getId() {

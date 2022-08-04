@@ -5,6 +5,7 @@ package com.asib27.authentication.UserCloned;
 import com.asib27.authentication.Cart.Cart;
 import com.asib27.authentication.Locations.Location;
 
+import com.asib27.authentication.Transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -36,6 +37,10 @@ public class UserCloned {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "user")
+    private Transaction transaction;
 
     @JsonIgnore
     @OneToOne(mappedBy = "user")
