@@ -3,6 +3,7 @@ package com.asib27.authentication.Book;
 
 import com.asib27.authentication.Cart.Cart;
 import com.asib27.authentication.Publisher.Publisher;
+import com.asib27.authentication.Reviews.Review;
 import com.asib27.authentication.Transaction.Transaction;
 import com.asib27.authentication.Writer.Writer;
 
@@ -79,6 +80,10 @@ public class Book {
     @JsonIgnore
     @ManyToMany(mappedBy = "cartBooks")
     private Set<Cart>bookInCarts = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "book")
+    private Set<Review> reviews = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(mappedBy = "booksInTransaction")
@@ -186,5 +191,9 @@ public class Book {
     }
     public Publisher getPublisher() {
         return publisher;
+    }
+
+    public void addReview(Review review){
+        reviews.add(review);
     }
 }

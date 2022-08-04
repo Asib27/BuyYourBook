@@ -5,6 +5,7 @@ package com.asib27.authentication.UserCloned;
 import com.asib27.authentication.Cart.Cart;
 import com.asib27.authentication.Locations.Location;
 
+import com.asib27.authentication.Reviews.Review;
 import com.asib27.authentication.Transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -59,6 +60,10 @@ public class UserCloned {
     @ManyToMany(mappedBy = "follows")
     private Set<UserCloned>followedby = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "userCloned")
+    private Set<Review> reveiws = new HashSet<>();
+
 
     public Long getId() {
         return id;
@@ -110,5 +115,11 @@ public class UserCloned {
     public Set<UserCloned> getFollowedby() {
         return followedby;
     }
+
+    public void addReview(Review review)
+    {
+        reveiws.add(review);
+    }
+
 
 }

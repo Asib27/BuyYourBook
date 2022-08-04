@@ -70,7 +70,9 @@ Payment(
 
 Reviews(
 	review_id PRIMARY KEY,
+	review varchar(500),
 	user_id FOREIGN KEY REFERENCES Users(user_id),
+	book_id FOREIGN KEY REFERENCES Books(isbn),
 	rating,
 	downvotes,
 	upvotes
