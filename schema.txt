@@ -37,9 +37,9 @@ Books(
 )
 
 Follows(
-	follower_id FOREIGN_KEY REFERENCES users(user_id),
-	followed_id FOREIGN_KEY REFERENCES users(user_id),
-	PRIMARY KEY(follower_id, followed_id)
+	user_id FOREIGN_KEY REFERENCES users(user_id),
+	follows_whom FOREIGN_KEY REFERENCES users(user_id),
+	PRIMARY KEY(user_id, follows_whom)
 )
 
 Author_of_book(
