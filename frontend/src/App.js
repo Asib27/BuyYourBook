@@ -1,6 +1,7 @@
 import {Routes, Route } from 'react-router-dom';
 import './App.css';
 import Hello from './components/hello';
+import NavigationBar from './components/navbar';
 import SignIn from './components/signin';
 import SignUp from './components/signup';
 import ReviewPage from './pages/reviewPage';
@@ -8,6 +9,7 @@ import ReviewPage from './pages/reviewPage';
 function App() {
   return (
     <div className="App">
+      
       <Routes>
         <Route path='/' element={<Hello/>}/>
         <Route path='/signin' element={<SignIn/>}/>

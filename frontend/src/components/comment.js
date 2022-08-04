@@ -127,7 +127,7 @@ export default function CommentCard(props) {
 
   return (
     <ThemeProvider theme={theme}>
-        <Card sx={{ maxWidth: 1000 }}>
+        <Card sx={{ Width: '80%' }}>
         <CardHeader
             avatar={
             <Avatar sx={{ bgcolor: red[500] }} aria-label="author">
