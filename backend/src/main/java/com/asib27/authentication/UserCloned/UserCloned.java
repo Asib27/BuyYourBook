@@ -9,6 +9,8 @@ import com.asib27.authentication.Transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "UserCloned")
 @Entity
@@ -45,6 +47,18 @@ public class UserCloned {
     @JsonIgnore
     @OneToOne(mappedBy = "user")
     private Cart cart;
+
+    @ManyToMany
+    @JoinTable(name = "Follows",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follows_whom")
+    )
+    private Set<UserCloned> follows = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "follows")
+    private Set<UserCloned>followedby = new HashSet<>();
+
 
     public Long getId() {
         return id;
@@ -85,4 +99,16 @@ public class UserCloned {
     public void setCart(Cart cart) {
         this.cart = cart;
     }
+    public void whomFollows(UserCloned user){
+        follows.add(user);
+    }
+
+    public Set<UserCloned> getFollows() {
+        return follows;
+    }
+
+    public Set<UserCloned> getFollowedby() {
+        return followedby;
+    }
+
 }

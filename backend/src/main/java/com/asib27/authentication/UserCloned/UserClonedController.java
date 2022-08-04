@@ -40,5 +40,13 @@ public class UserClonedController {
         user.setLocation(location);
         return userClonedService.addNewUser(user);
     }
+    @PostMapping("/add/{user_id}/follows/{id}")
+    public UserCloned follower(@PathVariable Long user_id, @PathVariable Long id){
+        UserCloned user = userClonedService.getAnUer(user_id);
+        UserCloned user1 = userClonedService.getAnUer(id);
+
+        user.whomFollows(user1);
+        return userClonedService.addNewUser(user);
+    }
 
 }
