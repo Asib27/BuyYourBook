@@ -1,45 +1,8 @@
-import { Avatar, Box, Card, CardActions, CardContent, CardHeader, IconButton, Tab, Tabs, Typography } from '@mui/material';
-import { red } from '@mui/material/colors';
+import { Box, Tab, Tabs, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import ProfileBottomContent from '../components/profileExtended';
 
-const ProfileOverview = (props) =>{
-    const profile = props.profile;
-    return (
-    <Card sx={{display: 'flex', justifyContent: 'space-between' , p : 1, m: 1}}>
-            <CardHeader
-                avatar={
-                <Avatar sx={{ bgcolor: red[500], height: '80px', width: '80px' }} aria-label="author"
-                    variant='rounded'
-                >
-                    {profile.name.charAt(0)}
-                </Avatar>
-                }
-                
-                title={
-                    <Typography variant='h5'>
-                        {profile.name}
-                    </Typography>
-                }
-                subheader={
-                    <Typography variant='body1' align='left'>
-                        {profile.tag}
-                    </Typography>
-                }
-            />
-
-            <CardActions sx={{typography:'body1' ,display: 'flex', flexDirection: 'column',  justifyContent: 'center' }}>
-                <IconButton aria-label="Buy" size='small'>
-                    {"Followers: " + profile.follower}
-                </IconButton>
-                <IconButton aria-label="Buy" size='small'>
-                    {"Follows: " + profile.follows}
-                </IconButton>
-            </CardActions>
-        </Card>
-    )
-}
+import ProfileOverviewTab from '../components/profileOverviewTab';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -76,13 +39,6 @@ function a11yProps(index) {
   
 
 export default function UserProfilePage(){
-    const profile= {
-        name: 'Lores Ipsum',
-        tag: 'Novice',
-        follower: '20k',
-        follows: '10k'
-    }
-
     const [tabValue, setTabValue] = React.useState(0);
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -109,8 +65,7 @@ export default function UserProfilePage(){
             <Tab label="Item Seven" {...a11yProps(6)} />
             </Tabs>
             <TabPanel value={tabValue} index={0}>
-                <ProfileOverview profile={profile}/>
-                <ProfileBottomContent/>
+                <ProfileOverviewTab/>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
             Item Two
