@@ -1,31 +1,26 @@
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box} from "@mui/material";
 import BookCardMedium from "../components/book_card_mid";
 import Carousel from "nuka-carousel/lib/carousel";
-
-function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
+import CommentCard from "../components/comment";
+import bookService from "../services/book.service";
 
 export default function HomePage(props) {
-    const Book = {
-        image: "https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg",
-        name: "The art ",
-        author: "Knuth"
-    };
+    const bookId = bookService.getBookIds();
 
     return (
         <Box >
             <Carousel wrapAround={true}
             slidesToShow={7} cellSpacing={20}>
-                <BookCardMedium book={Book}/>
-                <BookCardMedium book={Book}/>
-                <BookCardMedium book={Book}/>
-                <BookCardMedium book={Book}/>
-                <BookCardMedium book={Book}/>
+                {
+                    bookId.map((id)=>{
+                        return (<BookCardMedium key={id} book={bookService.getBookById(id)}/>);
+                    })
+                }
             </Carousel>
+            <CommentCard key={1} comment_id={1}/>
+            <CommentCard key={2} comment_id={2}/>
+            <CommentCard key={3} comment_id={3}/>
+            <CommentCard key={4} comment_id={0}/>
         </Box>
     );
 }
