@@ -1,10 +1,10 @@
 import {Routes, Route } from 'react-router-dom';
 import './App.css';
-import BookCardMedium from './components/book_card_mid';
 import Hello from './components/hello';
 import NavigationBar from './components/navbar';
 import SignIn from './components/signin';
 import SignUp from './components/signup';
+import HomePage from './pages/homePage';
 import ReviewPage from './pages/reviewPage';
 import UserProfilePage from './pages/userProfilePage';
 
@@ -18,7 +18,7 @@ function App() {
         <Route path='/signup' element={<SignUp/>}/>
         <Route path='/comments' element={<ReviewPage/>}/>
         <Route path='/profile' element={<UserProfilePage/>}/>
-        <Route path='/book' element={<BookCardMedium/>}/>
+        <Route path='/home' element={<HomePage/>}/>
       </Routes>
     </div>
   );
