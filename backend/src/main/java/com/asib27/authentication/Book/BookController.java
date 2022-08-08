@@ -25,6 +25,14 @@ public class BookController {
         return bookService.getAllBooks();
     }
 
+    @GetMapping("/get/{book_name}")
+    public Long getBookIdByName(@PathVariable String book_name){
+        // System.out.println("called" + book_name);
+        Long x = bookService.getBookIdByName(book_name);
+        // System.out.println(x);
+        return x;
+    }
+
     @PostMapping("/add")
     public String addNewBook(@RequestBody Book book){
         bookService.addNewBook(book);
@@ -45,13 +53,17 @@ public class BookController {
         return bookService.addNewBook(book);
     }
 
-
+    @GetMapping("/get/random/{count}")
+    public List<Book> getRandomBooks(@PathVariable int count){
+        return bookService.getRandomBooks(count);
+    }
 
     @PutMapping("/add/{bookId}/published_by/{publisherId}")
-    public Book publishersOfBook(@PathVariable Long bookId, @PathVariable Long publisherId){
+    public Book publisherOfBook(@PathVariable Long bookId, @PathVariable Long publisherId){
         Book book = bookService.getBook(bookId);
         Publisher publisher = publisherService.getPublisher(publisherId);
         book.addPublisher(publisher);
         return bookService.addNewBook(book);
     }
 }
+

@@ -6,7 +6,6 @@ import com.asib27.authentication.Publisher.Publisher;
 import com.asib27.authentication.Reviews.Review;
 import com.asib27.authentication.Transaction.Transaction;
 import com.asib27.authentication.Writer.Writer;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -15,7 +14,7 @@ import java.util.Set;
 
 
 @Table(name = "books")
-@Entity
+@Entity(name = "books")
 public class Book {
 
     @Id
@@ -45,6 +44,7 @@ public class Book {
             length = 50
     )
     private String language;
+
     @Column(
             name = "genre",
             nullable = false,
@@ -77,13 +77,14 @@ public class Book {
     @JoinColumn(name = "publisher_id", referencedColumnName = "id")
     private Publisher publisher;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "cartBooks")
-    private Set<Cart>bookInCarts = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "book")
     private Set<Review> reviews = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "cartBooks")
+    private Set<Cart>bookInCarts = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(mappedBy = "booksInTransaction")
@@ -191,6 +192,14 @@ public class Book {
     }
     public Publisher getPublisher() {
         return publisher;
+    }
+
+    public Set<Transaction> getTransactionBooks() {
+        return transactionBooks;
+    }
+
+    public void setTransactionBooks(Set<Transaction> transactionBooks) {
+        this.transactionBooks = transactionBooks;
     }
 
     public void addReview(Review review){

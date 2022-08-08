@@ -4,9 +4,11 @@ import com.asib27.authentication.Book.Book;
 import com.asib27.authentication.UserCloned.UserCloned;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Date;
 
 @Table(name = "reviews")
-@Entity
+@Entity(name = "reviews")
 public class Review {
 
     @Id
@@ -27,15 +29,21 @@ public class Review {
     private int downVotes;
 
     @Column(
-            name = "rating"
-    )
-    private float rating;
-
-    @Column(
             name = "review",
             length = 500
     )
     private String review_text;
+
+    @Column(
+            name = "rating"
+    )
+    private int rating;
+
+    @Column(
+            name = "addDate"
+    )
+    private Timestamp addDate;
+
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "book_id", referencedColumnName = "isbn")
@@ -45,11 +53,12 @@ public class Review {
     @JoinColumn(name = "user_id", referencedColumnName = "userid")
     private UserCloned userCloned;
 
-    public Review(int upvotes, int downvotes, String review_text, float rating) {
+    public Review(int upvotes, int downvotes, String review_text, int rating, Timestamp addDate) {
         this.upVotes = upvotes;
         this.downVotes = downvotes;
         this.review_text = review_text;
         this.rating = rating;
+        this.addDate = addDate;
     }
 
     public Review() {
@@ -67,7 +76,7 @@ public class Review {
         return downVotes;
     }
 
-    public float getRating() {
+    public int getRating() {
         return rating;
     }
 
@@ -83,9 +92,10 @@ public class Review {
         this.downVotes = downvotes;
     }
 
-    public void setRating(float rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
+
     public Book getBook() {
         return book;
     }
@@ -108,5 +118,13 @@ public class Review {
 
     public void setReview_text(String review_text) {
         this.review_text = review_text;
+    }
+
+    public Date getAddDate() {
+        return addDate;
+    }
+
+    public void setAddDate(Timestamp addDate) {
+        this.addDate = addDate;
     }
 }
