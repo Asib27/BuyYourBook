@@ -2,6 +2,7 @@ import { Box, LinearProgress, Paper, Rating, Stack, Typography } from "@mui/mate
 import CommentCardHolder from "../components/comment_holder";
 import reviewService from "../services/review.service";
 import BookCardLarge from "../components/book_card_large";
+import { useParams } from "react-router-dom";
 
 const ReviewLeftPan = (props)=>{
     const rating_avg = reviewService.getRatingAvg();
@@ -11,7 +12,7 @@ const ReviewLeftPan = (props)=>{
         <Box pt={5}>
             <Stack alignItems='center'>
                 <Typography variant='h2'>{rating_avg}</Typography>
-                <Rating name="user-rating" defaultValue={no_of_review} precision={0.1} readOnly />
+                <Rating name="user-rating" defaultValue={rating_avg} precision={0.1} readOnly />
                 <Typography>{no_of_review} reviews</Typography>
             </Stack>
         </Box>
@@ -49,9 +50,12 @@ const ReviewRightPan = (props)=>{
 }
 
 export default function ReviewPage(props){
+    const params = useParams();
+    const bookId = params.bookid;
+
     return (
         <Stack sx={{width: '80%'}} spacing={5}>
-            <BookCardLarge/>
+            <BookCardLarge bookId={bookId}/>
             <Paper elevation={3} style={{margin: '20', padding: '50'}}>
                 <Typography alignSelf='flex-start' variant='h5'>Ratings and Reviews</Typography>
                 <Stack direction="row" spacing={2}>

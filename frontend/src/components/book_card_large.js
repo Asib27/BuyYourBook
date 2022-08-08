@@ -5,19 +5,23 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import bookService from '../services/book.service';
 
-export default function BookCardLarge() {
+export default function BookCardLarge(props) {
 //   const theme = useTheme();
-  const BookName = "Introduction to algorithm";
-  const BookAuthor = "Knuth";
-  const description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vulputate purus quis metus gravida faucibus. Donec sit amet risus dapibus, scelerisque ligula sed, sodales nibh. Aenean tristique rutrum eros, ac molestie libero tempus at. In hac habitasse platea dictumst. Vivamus diam justo, ultricies nec tortor vel, efficitur tincidunt dui. Donec eget iaculis lorem"
+  const bookId = props.bookId;
+  const Book = bookService.getBookById(bookId);
+
+  const BookName = Book.name;
+  const BookAuthor = Book.author;
+  const description = Book.description;
 
   return (
     <Card sx={{ display: 'flex' }}>
         <CardMedia
             component="img"
             sx={{ width: 151 }}
-            image="https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg"
+            image={Book.image}
             alt="Live from space album cover"
         />
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
