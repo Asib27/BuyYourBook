@@ -4,6 +4,7 @@ import com.asib27.authentication.Book.Book;
 import com.asib27.authentication.UserCloned.UserCloned;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -120,7 +121,7 @@ public class Review {
         this.review_text = review_text;
     }
 
-    public Date getAddDate() {
+    public Timestamp getAddDate() {
         return addDate;
     }
 
