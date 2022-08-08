@@ -7,6 +7,11 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import bookService from '../services/book.service';
 
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ShareIcon from '@mui/icons-material/Share';
+import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
+import { red } from '@mui/material/colors';
+
 export default function BookCardLarge(props) {
 //   const theme = useTheme();
   const bookId = props.bookId;
@@ -32,19 +37,22 @@ export default function BookCardLarge(props) {
                 <Typography variant="subtitle1" color="text.secondary" component="div">
                     {BookAuthor}
                 </Typography >
-                <Typography variant='body1'>
+                <Typography variant='body1' align='left'>
                     {description}
+                </Typography>
+                <Typography variant='h6' align='left' sx={{mt: 2}}>
+                    {Book.price + "Tk"}
                 </Typography>
             </CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                 <IconButton aria-label="Buy">
-                    Buy
+                    <AddShoppingCartIcon/>
                 </IconButton>
-                <IconButton aria-label="play/pause">
-                    Share
+                <IconButton aria-label="Share">
+                    <ShareIcon/>
                 </IconButton>
-                <IconButton aria-label="next">
-                    Review
+                <IconButton aria-label="Review">
+                    <InsertCommentOutlinedIcon/>
                 </IconButton>
             </Box>
         </Box>
