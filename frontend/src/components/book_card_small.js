@@ -1,13 +1,11 @@
 import { Avatar, Box, Card, CardActions, CardContent, CardHeader, IconButton, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useCart } from "react-use-cart";
 
 export default function BookCardSmall(props) {
-    const Book = props.data.book;
-    const data = props.data;
-
-    const [quantity, setQuantity] = useState(data.quantity);
+    const { updateItemQuantity, getItem } = useCart();
+    const item = getItem(props.itemId);
+    const Book = item.book;
     
-
     return (
         <Card sx={{ display: 'flex', alignItems: 'stretch', justifyContent: 'space-between'}}>
             <CardHeader
@@ -24,15 +22,15 @@ export default function BookCardSmall(props) {
                     label="Quanity"
                     type="number"
                     size="small"
-                    value={quantity}
-                    onChange={(event)=> setQuantity(event.target.value)}
+                    value={item.quantity}
+                    onChange={(event)=> updateItemQuantity(item.id , event.target.value)}
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
                 <Box sx={{pl: 10}}>
-                    <Typography variant='body2'> {"Unit price: " + data.unit_price}</Typography>
-                    <Typography variant='body2'> {"Total price: " + data.unit_price * data.quantity}</Typography>
+                    <Typography variant='body2'> {"Unit price: " + item.price}</Typography>
+                    <Typography variant='body2'> {"Total price: " + item.price * item.quantity}</Typography>
                 </Box>
             </CardContent>
             <CardActions>
