@@ -4,6 +4,7 @@ import Hello from './components/hello';
 import NavigationBar from './components/navbar';
 import SignIn from './components/signin';
 import SignUp from './components/signup';
+import BuyPage from './pages/buyPage';
 import HomePage from './pages/homePage';
 import ReviewPage from './pages/reviewPage';
 import UserProfilePage from './pages/userProfilePage';
@@ -19,6 +20,7 @@ function App() {
         <Route path='/book/:bookid' element={<ReviewPage/>}/>
         <Route path='/profile' element={<UserProfilePage/>}/>
         <Route path='/home' element={<HomePage/>}/>
+        <Route path='/buy' element={<BuyPage/>}/>
       </Routes>
     </div>
   );
