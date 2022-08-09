@@ -2,7 +2,7 @@ import { Avatar, Box, Card, CardActions, CardContent, CardHeader, IconButton, Te
 import { useCart } from "react-use-cart";
 
 export default function BookCardSmall(props) {
-    const { updateItemQuantity, getItem } = useCart();
+    const { updateItemQuantity, getItem, removeItem } = useCart();
     const item = getItem(props.itemId);
     const Book = item.book;
     
@@ -34,7 +34,7 @@ export default function BookCardSmall(props) {
                 </Box>
             </CardContent>
             <CardActions>
-                <IconButton aria-label="Remove item" size="small">
+                <IconButton aria-label="Remove item" size="small" onClick={() => removeItem(item.id)}>
                     Remove
                 </IconButton>
             </CardActions>
