@@ -1,4 +1,4 @@
-import { Box, Button, Card, FormControlLabel, Grid } from "@mui/material";
+import { Box, Button, Card, Divider, FormControlLabel, Grid, Paper, Stack, Typography } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Checkbox, TextField } from "formik-mui";
 import { useEffect } from "react";
@@ -11,7 +11,7 @@ let addressResponse = "";
 
 const AddressCard = (props)=>{
     return (
-        <Card sx={{width: '50%'}}>
+        <Card sx={{width: '50%', m: 2, p: 2}}>
             <Formik
             initialValues={{email: '', name: '', streetAddress: '', district: '', country: '', phone: '', BackupPhoneNo: '', checked: false}}
             validationSchema={Yup.object({
@@ -104,7 +104,7 @@ const AddressCard = (props)=>{
                         type="tel"
                         margin="normal"
                         fullWidth
-                        id="backuoPhone"
+                        id="backupPhone"
                         label="Backup Phone Number"
                         name="backupPhoneNo"
                         autoComplete="tel"
@@ -126,6 +126,57 @@ const AddressCard = (props)=>{
             )}
           </Formik>
         </Card>
+    )
+}
+
+const BuyCard = (props)=>{
+    return (
+        <Paper sx={{width: '48%', m: 2}}>
+            <Stack direction='column' sx={{width: '100%', p: 2}}>
+                <Box sx={{display: 'flex', justifyContent:'space-between', mx:2, mt:2}}>
+                    <Typography variant='h6'>Total Price</Typography>
+                    <Typography>BDT 1000</Typography>
+                </Box>
+                <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
+                    <Typography variant='h6'>Discount</Typography>
+                    <Typography >BDT 0</Typography>
+                </Box>
+                <Divider variant="inset"/>
+                <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
+                    <Typography color='red' variant='h6'>Final Price</Typography>
+                    <Typography color='red'>BDT 1000</Typography>
+                </Box>
+
+                <Formik 
+                    initialValues={{coupon: ''}}
+                    validationSchema={Yup.object({
+                        coupon: Yup.string().required('No coupon code given'),
+                    })}
+                >
+                    <Form >
+                        <Field
+                            component={TextField}
+                            margin="normal"
+                            fullWidth
+                            id="coupon"
+                            label="Coupon Code"
+                            name="coupon"
+                        />
+                        <ErrorMessage name='coupon'/>
+
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Apply Coupon
+                        </Button>
+
+                    </Form>
+                </Formik>
+            </Stack>
+        </Paper>
     )
 }
 
@@ -173,7 +224,10 @@ export default function BuyPage(props){
                     return (<BookCardSmall key={item.id} itemId={item.id}/>);
                 })
             }
-            <AddressCard/>
+            <Box sx={{display: 'flex'}}>
+                <AddressCard/>
+                <BuyCard/>
+            </Box>
         </Box>
     )
 };
