@@ -1,13 +1,14 @@
-import { AlertTitle, Box, Button, Card, Divider, FormControlLabel, Grid, Paper, Snackbar, Stack, Typography } from "@mui/material";
+import { AlertTitle, Box, Button, Card, Divider, IconButton, Paper, Snackbar, Stack, Typography } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { Checkbox, TextField } from "formik-mui";
+import {  TextField } from "formik-mui";
 import { forwardRef, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useCart } from "react-use-cart";
 import BookCardSmall from "../components/book_card_small";
 import * as Yup from 'yup';
 import cartService from "../services/cart.service";
 import MuiAlert from '@mui/material/Alert';
+
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 let addressResponse = "";
 
@@ -173,7 +174,7 @@ const BuyCard = (props)=>{
                 <Divider variant="inset"/>
                 <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
                     <Typography color='red' variant='h6'>Final Price</Typography>
-                    <Typography color='red'>{'BDT' + (cartTotal - metadata.discount)}</Typography>
+                    <Typography color='red'>{'BDT ' + ((cartTotal < metadata.discount)? 0: (cartTotal - metadata.discount))}</Typography>
                 </Box>
 
                 <Formik 
@@ -220,7 +221,10 @@ const BuyCard = (props)=>{
 }
 
 export default function BuyPage(props){
-    const { setItems, items, updateCartMetadata } = useCart();
+    const { setItems, items, updateCartMetadata, emptyCart, isEmpty } = useCart();
+    const removeAllClicked = ()=>{
+        emptyCart();
+    }
 
     const rows = [
         {
@@ -258,6 +262,17 @@ export default function BuyPage(props){
 
     return (
         <Box sx={{ m: 2}}>
+            <Box sx={{display: 'flex',alignItems: 'center'}}>
+                <ShoppingCartOutlinedIcon/>
+                <Typography variant='h4' sx={{pl: 2}}>Your Cart</Typography>
+                <Box sx={{flexGrow: 1}}/>
+                <IconButton aria-label="remove all" size='small' onClick={removeAllClicked}>
+                    Remove All
+                </IconButton>
+            </Box>
+            {
+                isEmpty? <Typography variant='h5' sx={{border: '2px solid', p: 2, mt: 1}}>Your cart is empty</Typography> : ""
+            }
             {
                 items.map((item)=>{
                     return (<BookCardSmall key={item.id} itemId={item.id}/>);
