@@ -15,6 +15,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { TextField } from 'formik-mui';
 import * as Yup from 'yup';
+import AuthService from '../services/auth.service';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -32,6 +34,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const navigate = useNavigate();
 
   return (
     <ThemeProvider theme={theme}>
@@ -52,15 +55,22 @@ export default function SignIn() {
             Sign in
           </Typography>
           <Formik
-            initialValues={{email: '', pass: '', remember: ''}}
+            initialValues={{uname: '', pass: '', remember: ''}}
             validationSchema={Yup.object({
               pass: Yup.string()
                 .required('Required'),
-              email: Yup.string().email('Invalid email address').required('Required'),
+              uname: Yup.string().required('Required'),
             })}
-            onSubmit={(values, { setSubmitting }) => {
-              console.log(values);
-              setSubmitting(false);
+            onSubmit={async (values, { resetForm }) => {
+              const res = await AuthService.login(values.uname, values.pass);
+              console.log(res);
+
+              if(res === undefined){
+                resetForm();
+              }
+              else{
+                navigate('/home', {replace: true});
+              }
             }}
           >
             <Form>
@@ -69,14 +79,14 @@ export default function SignIn() {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
+                id="uname"
+                label="Username"
+                name="uname"
+                autoComplete="username"
                 autoFocus  
               />
 
-              <ErrorMessage name='email'/>
+              <ErrorMessage name='uname'/>
 
               <Field 
                 component={TextField}
