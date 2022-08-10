@@ -12,13 +12,21 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { useNavigate } from 'react-router-dom';
 
 const pages = ['Home', 'Buy'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pageToRoute = {
+  'Home': '/home',
+  'Buy': '/buy',
+  'Profile': '/profile'
+}
+const settings = ['Profile', 'Logout'];
 
 const NavigationBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -34,6 +42,18 @@ const NavigationBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const menuClicked = (value)=>{
+    navigate(pageToRoute[value]);
+    handleCloseNavMenu();
+  }
+
+  const settingsClicked = (value)=>{
+    handleCloseUserMenu();
+
+    if(value === 'Logout') return ;
+    navigate(pageToRoute[value]);
+  }
 
   return (
     <AppBar position="static">
@@ -88,7 +108,7 @@ const NavigationBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => menuClicked(page)}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -117,7 +137,7 @@ const NavigationBar = () => {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => menuClicked(page)}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
@@ -148,7 +168,7 @@ const NavigationBar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={()=>settingsClicked(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
