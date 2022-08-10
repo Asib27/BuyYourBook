@@ -21,4 +21,8 @@ public class WriterService {
     public Writer getAWriter(Long writerId) {
         return writerRepository.findById(writerId).get();
     }
+
+    public Long getWriterIdByName(String writerName) {
+        return writerRepository.findIdByName(writerName);
+    }
 }

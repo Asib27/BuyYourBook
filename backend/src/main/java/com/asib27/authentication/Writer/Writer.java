@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Table(name = "authors")
-@Entity
+@Entity(name = "authors")
 public class Writer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +25,7 @@ public class Writer {
     )
     private String name;
     @Column(
-            name = "email",
-            unique = true,
-            length = 255
+            name = "email"
     )
     private String email;
 

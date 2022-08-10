@@ -6,24 +6,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Locations")
+@RequestMapping("/api/Locations")
 public class LocationController {
 
     @Autowired
     LocationService locationService;
 
-    @PostMapping("/addLocation")
+    @PostMapping("/add")
     public String addNewLocation(@RequestBody Location location) {
         locationService.addLocation(location);
         return "New location added!! ";
     }
 
-    @GetMapping("/findLocations")
+    @GetMapping("/get")
     public List<Location> getLocations() {
         return locationService.getLocations();
     }
 
-    @DeleteMapping("/deleteLocation/{location_id}")
+    @DeleteMapping("/delete/{location_id}")
     public String deleteLocation(@PathVariable Long location_id) {
         locationService.deleteLocation(location_id);
         return "Location deleted !!";

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/writer")
+@RequestMapping("/api/writer")
 public class WriterController {
 
     @Autowired

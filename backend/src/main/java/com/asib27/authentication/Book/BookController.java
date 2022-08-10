@@ -45,9 +45,11 @@ public class BookController {
         return "Book with id "+ bookId + " is deleted.";
     }
 
-    @PutMapping("/add/{bookId}/writer/{writerId}")
-    public Book authorsOfBook(@PathVariable Long bookId, @PathVariable Long writerId){
+    @PutMapping("/add/{bookName}/writer/{writerName}")
+    public Book authorsOfBook(@PathVariable String bookName, @PathVariable String writerName){
+        Long bookId = bookService.getBookIdByName(bookName);
         Book book = bookService.getBook(bookId);
+        Long writerId = writerService.getWriterIdByName(writerName);
         Writer writer = writerService.getAWriter(writerId);
         book.addWriters(writer);
         return bookService.addNewBook(book);
