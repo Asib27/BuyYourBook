@@ -15,6 +15,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { TextField } from 'formik-mui';
 import * as Yup from 'yup';
+import AuthService from '../services/auth.service';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -32,6 +34,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const navigate =  useNavigate();
 
   return (
     <ThemeProvider theme={theme}>
@@ -55,6 +58,7 @@ export default function SignUp() {
             initialValues={{
                 firstName: '',
                 lastName: '',
+                uname: '',
                 email: '',
                 acceptedTerms: false, // added for our checkbox
                 emailUpdate: false, // added for our checkbox
@@ -68,6 +72,7 @@ export default function SignUp() {
                 lastName: Yup.string()
                 .max(20, 'Must be 20 characters or less')
                 .required('Required'),
+                uname: Yup.string().required("Required"),
                 email: Yup.string()
                 .email('Invalid email address')
                 .required('Required'),
@@ -75,13 +80,33 @@ export default function SignUp() {
                 .required('Required')
                 .oneOf([true], 'You must accept the terms and conditions.'),
             })}
-            onSubmit={(values, { setSubmitting }) => {
-              console.log(values);
-              setSubmitting(false);
+            onSubmit={ async (values, { resetFrom }) => {
+              const res = await AuthService.register(values.uname, values.email, values.pass);
+              
+              if(res === undefined){
+                resetFrom(false);
+              }
+              else{
+                navigate('/signin', {replace: true});
+              }
             }}
           >
             <Form>
                 <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Field 
+                            component={TextField}
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="uname"
+                            label="Username"
+                            name="uname"
+                            autoComplete="username"
+                            autoFocus  
+                        />
+                        <ErrorMessage name='uname' />
+                    </Grid>
                     <Grid item xs={12} sm={6}>
                         <Field 
                             component={TextField}

@@ -13,6 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
+import AuthService from '../services/auth.service';
 
 const pages = ['Home', 'Buy'];
 const pageToRoute = {
@@ -51,7 +52,10 @@ const NavigationBar = () => {
   const settingsClicked = (value)=>{
     handleCloseUserMenu();
 
-    if(value === 'Logout') return ;
+    if(value === 'Logout'){
+      AuthService.logout();
+      return ;
+    } 
     navigate(pageToRoute[value]);
   }
 

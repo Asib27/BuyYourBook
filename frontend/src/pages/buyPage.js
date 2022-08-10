@@ -220,7 +220,7 @@ const BuyCard = (props)=>{
 }
 
 export default function BuyPage(props){
-    const { setItems, items } = useCart();
+    const { setItems, items, updateCartMetadata } = useCart();
 
     const rows = [
         {
@@ -252,7 +252,7 @@ export default function BuyPage(props){
     ];
 
     useEffect(() => {
-      setItems(rows);
+        updateCartMetadata({discount: 0});
     }, [])
     
 
