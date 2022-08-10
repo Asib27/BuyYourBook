@@ -10,37 +10,51 @@ import bookService from '../services/book.service';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShareIcon from '@mui/icons-material/Share';
 import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
-import { red } from '@mui/material/colors';
 import { useCart } from 'react-use-cart';
+import { AlertTitle, Snackbar } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function BookCardLarge(props) {
 //   const theme = useTheme();
     const {addItem} = useCart();
-
-  const bookId = props.bookId;
-  const Book = bookService.getBookById(bookId);
-
-  const BookName = Book.name;
-  const BookAuthor = Book.author;
-  const description = Book.description;
-
-  const onClickingBuy = ()=>{
-    const item  = {
-        id: Book.bookId, 
-        book: {
-            bookId: 1,
-            image: "https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg",
-            name: "The art ",
-            author: "Knuth",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vulputate purus quis metus gravida faucibus. Donec sit amet risus dapibus, scelerisque ligula sed, sodales nibh. Aenean tristique rutrum eros, ac molestie libero tempus at. In hac habitasse platea dictumst. Vivamus diam justo, ultricies nec tortor vel, efficitur tincidunt dui. Donec eget iaculis lorem",
-            price: "199",
-        }, 
-        quantity: 1, 
-        price: Book.price,
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason)=>{
+        if (reason === 'clickaway') {
+            return;
+          }
+      
+        setOpenSnackbar(false);
     }
 
-    addItem(item, 1);
-  }
+    const bookId = props.bookId;
+    const Book = bookService.getBookById(bookId);
+
+    const BookName = Book.name;
+    const BookAuthor = Book.author;
+    const description = Book.description;
+
+    const onClickingBuy = ()=>{
+        const item  = {
+            id: Book.bookId, 
+            book: {
+                bookId: 1,
+                image: "https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg",
+                name: "The art ",
+                author: "Knuth",
+                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vulputate purus quis metus gravida faucibus. Donec sit amet risus dapibus, scelerisque ligula sed, sodales nibh. Aenean tristique rutrum eros, ac molestie libero tempus at. In hac habitasse platea dictumst. Vivamus diam justo, ultricies nec tortor vel, efficitur tincidunt dui. Donec eget iaculis lorem",
+                price: "199",
+            }, 
+            quantity: 1, 
+            price: Book.price,
+        }
+
+        addItem(item, 1);
+        setOpenSnackbar(true);
+    }
 
   return (
     <Card sx={{ display: 'flex' }}>
@@ -77,6 +91,12 @@ export default function BookCardLarge(props) {
                 </IconButton>
             </Box>
         </Box>
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+            <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+            <AlertTitle>Success</AlertTitle>
+                Item added to cart succesfully.
+            </Alert>
+        </Snackbar>
     </Card>
   );
 }
