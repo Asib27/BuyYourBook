@@ -1,11 +1,13 @@
-import { Box, Button, Card, Divider, FormControlLabel, Grid, Paper, Stack, Typography } from "@mui/material";
+import { AlertTitle, Box, Button, Card, Divider, FormControlLabel, Grid, Paper, Snackbar, Stack, Typography } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Checkbox, TextField } from "formik-mui";
-import { useEffect } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "react-use-cart";
 import BookCardSmall from "../components/book_card_small";
 import * as Yup from 'yup';
+import cartService from "../services/cart.service";
+import MuiAlert from '@mui/material/Alert';
 
 let addressResponse = "";
 
@@ -129,22 +131,49 @@ const AddressCard = (props)=>{
     )
 }
 
+const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const BuyCard = (props)=>{
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const handleSnackbarClose = (event, reason)=>{
+        if (reason === 'clickaway') {
+            return;
+          }
+      
+        setOpenSnackbar(false);
+    }
+
+    const {cartTotal, metadata, updateCartMetadata} = useCart();
+    if(metadata.discount === undefined){
+        updateCartMetadata({discount: 0});
+    }
+
+    const couponOnClick = (code)=>{
+        const discount = cartService.verifyCouponCode(code);
+        if(discount === 0){
+            setOpenSnackbar(true);
+        }else{
+            updateCartMetadata({discount: discount});
+        }
+    }
+
     return (
         <Paper sx={{width: '48%', m: 2}}>
             <Stack direction='column' sx={{width: '100%', p: 2}}>
                 <Box sx={{display: 'flex', justifyContent:'space-between', mx:2, mt:2}}>
                     <Typography variant='h6'>Total Price</Typography>
-                    <Typography>BDT 1000</Typography>
+                    <Typography>{'BDT' + cartTotal}</Typography>
                 </Box>
                 <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
                     <Typography variant='h6'>Discount</Typography>
-                    <Typography >BDT 0</Typography>
+                    <Typography >{'BDT' + metadata.discount}</Typography>
                 </Box>
                 <Divider variant="inset"/>
                 <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
                     <Typography color='red' variant='h6'>Final Price</Typography>
-                    <Typography color='red'>BDT 1000</Typography>
+                    <Typography color='red'>{'BDT' + (cartTotal - metadata.discount)}</Typography>
                 </Box>
 
                 <Formik 
@@ -152,6 +181,10 @@ const BuyCard = (props)=>{
                     validationSchema={Yup.object({
                         coupon: Yup.string().required('No coupon code given'),
                     })}
+                    onSubmit={(values, { setSubmitting }) => {
+                        couponOnClick(values.coupon);
+                        setSubmitting(false);
+                    }}
                 >
                     <Form >
                         <Field
@@ -176,6 +209,12 @@ const BuyCard = (props)=>{
                     </Form>
                 </Formik>
             </Stack>
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+                <AlertTitle>Invalid Coupon</AlertTitle>
+                    Coupon you entered maybe expired or invalid 
+                </Alert>
+            </Snackbar>
         </Paper>
     )
 }
