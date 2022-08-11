@@ -9,6 +9,7 @@ import cartService from "../services/cart.service";
 import MuiAlert from '@mui/material/Alert';
 
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import StripeCheckout from "react-stripe-checkout";
 
 let addressResponse = "";
 
@@ -160,9 +161,14 @@ const BuyCard = (props)=>{
         }
     }
 
+    
+    const onToken = (val)=>{
+        console.log(val);
+    }
+
     return (
-        <Paper sx={{width: '48%', m: 2}}>
-            <Stack direction='column' sx={{width: '100%', p: 2}}>
+        <Paper sx={{width: '100%', m: 2,  p: 2}}>
+            <Stack direction='column' sx={{width: '100%',}}>
                 <Box sx={{display: 'flex', justifyContent:'space-between', mx:2, mt:2}}>
                     <Typography variant='h6'>Total Price</Typography>
                     <Typography>{'BDT' + cartTotal}</Typography>
@@ -209,6 +215,21 @@ const BuyCard = (props)=>{
 
                     </Form>
                 </Formik>
+
+
+                <StripeCheckout 
+                        name="BuyYourBook"
+                        description="Your total is BDT 20"
+                        amount={2000}
+                        token={onToken}
+                        stripeKey={KEY}
+                        currency="BDT"
+                    >
+                        <Button color='info' fullWidth
+                            variant="contained">
+                            Buy Now
+                        </Button>
+                </StripeCheckout>
             </Stack>
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
@@ -220,45 +241,21 @@ const BuyCard = (props)=>{
     )
 }
 
+const KEY = "pk_test_51LVfwtSCK00cFVdUgCeGovR4HGLHmQ9HtDVTgTQUZhYwJEmsZFNOubShcJsl3JZO6frCTUph4W1LsVqKsmk7YT2r00dnsdtm9S";
+
 export default function BuyPage(props){
     const { setItems, items, updateCartMetadata, emptyCart, isEmpty } = useCart();
     const removeAllClicked = ()=>{
         emptyCart();
     }
 
-    const rows = [
-        {
-            id: 1, 
-            book: {
-                bookId: 1,
-                image: "https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg",
-                name: "The art ",
-                author: "Knuth",
-                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vulputate purus quis metus gravida faucibus. Donec sit amet risus dapibus, scelerisque ligula sed, sodales nibh. Aenean tristique rutrum eros, ac molestie libero tempus at. In hac habitasse platea dictumst. Vivamus diam justo, ultricies nec tortor vel, efficitur tincidunt dui. Donec eget iaculis lorem",
-                price: "199",
-            }, 
-            quantity: 2, 
-            price: 50,
-        },
-        {
-            id: 2, 
-            book: {
-                bookId: 2,
-                image: "https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg",
-                name: "The art ",
-                author: "Knuth",
-                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vulputate purus quis metus gravida faucibus. Donec sit amet risus dapibus, scelerisque ligula sed, sodales nibh. Aenean tristique rutrum eros, ac molestie libero tempus at. In hac habitasse platea dictumst. Vivamus diam justo, ultricies nec tortor vel, efficitur tincidunt dui. Donec eget iaculis lorem",
-                price: "199",
-            }, 
-            quantity: 3, 
-            price: 100,
-        }
-    ];
-
     useEffect(() => {
         updateCartMetadata({discount: 0});
     }, [])
     
+    const onToken = (val)=>{
+        console.log(val);
+    }
 
     return (
         <Box sx={{ m: 2}}>
@@ -280,7 +277,9 @@ export default function BuyPage(props){
             }
             <Box sx={{display: 'flex'}}>
                 <AddressCard/>
-                <BuyCard/>
+                <Box>
+                    <BuyCard/>
+                </Box>
             </Box>
         </Box>
     )
