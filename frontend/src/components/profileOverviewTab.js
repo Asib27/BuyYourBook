@@ -39,7 +39,7 @@ const ProfileOverview = (props) =>{
     )
 }
 
-export default function ProfileOverviewTab(){
+export default function ProfileOverviewTab(props){
     const profile= {
         name: 'Lores Ipsum',
         tag: 'Novice',
@@ -50,7 +50,7 @@ export default function ProfileOverviewTab(){
     return (
         <Box>
             <ProfileOverview profile={profile}/>
-            <ProfileBottomContent/>
+            <ProfileBottomContent tabchange={props.tabchange}/>
         </Box>
     )
 }

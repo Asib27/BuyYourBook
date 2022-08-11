@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 
 import ProfileOverviewTab from '../components/profileOverviewTab';
+import UserDetailsForm from '../components/user_details_form_tab';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -57,7 +58,7 @@ export default function UserProfilePage(){
             sx={{ borderRight: 1, borderColor: 'divider', width: '20%' }}
             >
             <Tab label="Overview" {...a11yProps(0)} />
-            <Tab label="Item Two" {...a11yProps(1)} />
+            <Tab label="Edit profile" {...a11yProps(1)} />
             <Tab label="Item Three" {...a11yProps(2)} />
             <Tab label="Item Four" {...a11yProps(3)} />
             <Tab label="Item Five" {...a11yProps(4)} />
@@ -65,10 +66,10 @@ export default function UserProfilePage(){
             <Tab label="Item Seven" {...a11yProps(6)} />
             </Tabs>
             <TabPanel value={tabValue} index={0}>
-                <ProfileOverviewTab/>
+              <ProfileOverviewTab tabchange={setTabValue}/>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
-            Item Two
+              <UserDetailsForm/>
             </TabPanel>
             <TabPanel value={tabValue} index={2}>
             Item Three

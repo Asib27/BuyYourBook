@@ -69,7 +69,7 @@ const ProfileInfo = (props)=>{
     <Card>
       <CardHeader
         action={
-        <IconButton aria-label="settings">
+        <IconButton aria-label="settings" onClick={() => props.tabchange(1)}>
             <EditIcon/>
         </IconButton>
         }
@@ -192,7 +192,7 @@ function ProfileBottomContent(props) {
             sm={12}
             md={4}
           >
-            <ProfileInfo profile={profile} />
+            <ProfileInfo profile={profile} tabchange={props.tabchange}/>
           </Grid>
 
           <Grid
