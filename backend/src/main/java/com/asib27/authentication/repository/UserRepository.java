@@ -2,7 +2,9 @@ package com.asib27.authentication.repository;
 
 import java.util.Optional;
 
+import com.asib27.authentication.UserCloned.UserCloned;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Repository;
 
 import com.asib27.authentication.models.User;

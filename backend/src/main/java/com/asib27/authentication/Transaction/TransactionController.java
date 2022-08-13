@@ -60,7 +60,7 @@ public class TransactionController {
 
     @PostMapping("/add/{tx_id}/user/{u_id}")
     public Transaction addUserToTransaction(@PathVariable Long tx_id,@PathVariable Long u_id){
-        UserCloned user = userClonedService.getAnUer(u_id);
+        UserCloned user = userClonedService.getAnUser(u_id);
         Transaction transaction = transactionService.findTransactionByID(tx_id);
         transaction.setUser(user);
         return transactionService.addTransaction(transaction);

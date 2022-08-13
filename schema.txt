@@ -45,8 +45,7 @@ Follows(
 Author_of_book(
 	isbn FOREIGN KEY REFERENCES Books(isbn),
 	author_id FOREIGN KEY REFERENCES Authors(author_id),
-	publisher_id FOREIGN KEY REFERENCES Publications(publication_id)
-	PRIMARY KEY(isbn, author_id, publication_id)
+	PRIMARY KEY(isbn, author_id)
 )
 
 Transaction(

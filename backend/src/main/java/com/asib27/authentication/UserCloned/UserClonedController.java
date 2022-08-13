@@ -25,25 +25,31 @@ public class UserClonedController {
 
     @GetMapping("/get")
     public List<UserCloned> getAllUsers(){
-        return userClonedService.getAllUers();
+        return userClonedService.getAllUsers();
     }
 
     @GetMapping("/get/{userid}")
     public UserCloned getAnUser(@PathVariable Long userid){
-        return userClonedService.getAnUer(userid);
+        return userClonedService.getAnUser(userid);
     }
+
+    @GetMapping("/get/currentUser")
+    public UserCloned getCurrentUser(){
+        return userClonedService.getCurrentUser();
+    }
+
 
     @PostMapping("/add/{userid}/Location/{locationid}")
     public UserCloned addLocation(@PathVariable Long userid, @PathVariable Long locationid){
-        UserCloned user = userClonedService.getAnUer(userid);
+        UserCloned user = userClonedService.getAnUser(userid);
         Location location = locationService.getALocation(locationid);
         user.setLocation(location);
         return userClonedService.addNewUser(user);
     }
     @PostMapping("/add/{user_id}/follows/{id}")
     public UserCloned follower(@PathVariable Long user_id, @PathVariable Long id){
-        UserCloned user = userClonedService.getAnUer(user_id);
-        UserCloned user1 = userClonedService.getAnUer(id);
+        UserCloned user = userClonedService.getAnUser(user_id);
+        UserCloned user1 = userClonedService.getAnUser(id);
 
         user.whomFollows(user1);
         return userClonedService.addNewUser(user);

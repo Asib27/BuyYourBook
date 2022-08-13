@@ -1,10 +1,7 @@
 package com.asib27.authentication.UserCloned;
 
 
-
-import com.asib27.authentication.Cart.Cart;
 import com.asib27.authentication.Locations.Location;
-
 import com.asib27.authentication.Reviews.Review;
 import com.asib27.authentication.Transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,8 +10,8 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Table(name = "UserCloned")
-@Entity
+@Table(name = "User_cloned")
+@Entity(name = "user_cloned")
 public class UserCloned {
 
     @Id
@@ -45,9 +42,6 @@ public class UserCloned {
     @OneToOne(mappedBy = "user")
     private Transaction transaction;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "user")
-    private Cart cart;
 
     @ManyToMany
     @JoinTable(name = "Follows",
@@ -97,13 +91,6 @@ public class UserCloned {
         this.location = location;
     }
 
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
     public void whomFollows(UserCloned user){
         follows.add(user);
     }
@@ -120,6 +107,5 @@ public class UserCloned {
     {
         reveiws.add(review);
     }
-
 
 }

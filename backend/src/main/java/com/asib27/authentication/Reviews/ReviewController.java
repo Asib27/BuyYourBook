@@ -50,7 +50,7 @@ public class ReviewController {
     @PostMapping("/add/{review_id}/user/{user_id}")
     public Review addReviewToUser(@PathVariable Long review_id, @PathVariable Long user_id){
         Review review = reviewService.getReview(review_id);
-        UserCloned user = userClonedService.getAnUer(user_id);
+        UserCloned user = userClonedService.getAnUser(user_id);
         review.setUserCloned(user);
         return reviewService.addNewReview(review);
     }
@@ -80,9 +80,7 @@ public class ReviewController {
     @GetMapping("/get/review_count/{book_name}")
     public int getReviewCountByBookName(@PathVariable String book_name){
         Long id = bookService.getBookIdByName(book_name);
-        System.out.println(book_name + " has book_id " + id);
         int x =  reviewService.getReviewCountByBookName(id);
-        System.out.println("average rating " + x);
         return x;
     }
 
