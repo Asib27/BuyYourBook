@@ -11,7 +11,7 @@
 	<groupId>com.asib27</groupId>
 	<artifactId>authentication</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>authentication</name>
+	<name>BuyYourBook</name>
 	<description>project for authentication</description>
 	<properties>
 		<java.version>11</java.version>
@@ -74,6 +74,33 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-webapp-maven-plugin</artifactId>
+				<version>1.7.0</version>
+				<configuration>
+				<schemaVersion>v1</schemaVersion>
+				<resourceGroup>maven-plugin</resourceGroup>
+				<appName>BuyYourBook</appName>
+				<region>BD</region>
+				<runtime>
+					<os>linux</os>
+					<javaVersion>jre8</javaVersion>
+					<webContainer></webContainer>
+				</runtime>
+				<deployment>
+					<resources>
+						<resource>
+							<directory>${project.basedir}/target</directory>
+							<includes>
+								<include>*.jar</include>
+							</includes>
+						</resource>
+					</resources>
+				</deployment>
+				<pricingTier>F1</pricingTier>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
