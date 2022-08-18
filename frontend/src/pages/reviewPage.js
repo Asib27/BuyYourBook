@@ -3,6 +3,8 @@ import CommentCardHolder from "../components/comment_holder";
 import reviewService from "../services/review.service";
 import BookCardLarge from "../components/book_card_large";
 import { useParams } from "react-router-dom";
+import RichTextEditor from "@mantine/rte";
+import { useState } from "react";
 
 const ReviewLeftPan = (props)=>{
     const rating_avg = reviewService.getRatingAvg();
@@ -52,6 +54,10 @@ const ReviewRightPan = (props)=>{
 export default function ReviewPage(props){
     const params = useParams();
     const bookId = params.bookid;
+
+    const initialValue =
+  '<p>Your initial <b>html value</b> or an empty string to init editor without value</p>';
+    const [review, setReview] = useState(initialValue);
 
     return (
         <Stack sx={{width: '80%'}} spacing={5}>

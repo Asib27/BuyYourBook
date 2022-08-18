@@ -1,6 +1,6 @@
 import { Box} from "@mui/material";
 import BookCardMedium from "../components/book_card_mid";
-import Carousel from "nuka-carousel/lib/carousel";
+import {Carousel} from "@mantine/carousel";
 import CommentCard from "../components/comment";
 import bookService from "../services/book.service";
 
@@ -9,8 +9,7 @@ export default function HomePage(props) {
 
     return (
         <Box >
-            <Carousel wrapAround={true}
-            slidesToShow={7} cellSpacing={20}>
+            <Carousel align='start' slideSize="70%" height={200} slideGap="sm" controlsOffset="xs" controlSize={29} loop>
                 {
                     bookId.map((id)=>{
                         return (<BookCardMedium key={id} book={bookService.getBookById(id)}/>);
