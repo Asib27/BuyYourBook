@@ -63,13 +63,18 @@ public class CartItemController {
     public Double getPriceWithDiscount(@RequestParam Long couponId)  {
 
         UserCloned user = userClonedService.getCurrentUser();
-
         try {
             return cartItemService.getDisountedTotal(user, couponId);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         return getTotalPrice();
+    }
+
+    @PostMapping("/buy")
+    public void buyCartItems(){
+        UserCloned user = userClonedService.getCurrentUser();
+        cartItemService.reduce_the_count_of_cartBooks(user);
     }
 
 

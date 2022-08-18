@@ -3,7 +3,6 @@ package com.asib27.authentication.Transaction;
 
 import com.asib27.authentication.Book.Book;
 import com.asib27.authentication.Locations.Location;
-import com.asib27.authentication.Payment.Payment;
 import com.asib27.authentication.UserCloned.UserCloned;
 
 import javax.persistence.*;
@@ -30,9 +29,9 @@ public class Transaction{
     @JoinColumn(name = "user_id",  referencedColumnName = "userid")
     private UserCloned user;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id",  referencedColumnName = "payment_id")
-    private Payment payment;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "payment_id",  referencedColumnName = "payment_id")
+//    private Payment payment;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
@@ -65,13 +64,13 @@ public class Transaction{
         this.user = user;
     }
 
-    public Payment getPayment() {
-        return payment;
-    }
-
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
+//    public Payment getPayment() {
+//        return payment;
+//    }
+//
+//    public void setPayment(Payment payment) {
+//        this.payment = payment;
+//    }
 
     public Location getLocation() {
         return location;

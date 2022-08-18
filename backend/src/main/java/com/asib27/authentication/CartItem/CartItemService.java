@@ -64,4 +64,9 @@ public class CartItemService {
         }
 
     }
+
+    @Transactional
+    public void reduce_the_count_of_cartBooks(UserCloned user) {
+        cartItemRepository.reduce_the_count_of_cartBooks(user.getId());
+    }
 }

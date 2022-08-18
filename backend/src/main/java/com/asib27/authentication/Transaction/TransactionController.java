@@ -4,8 +4,6 @@ import com.asib27.authentication.Book.Book;
 import com.asib27.authentication.Book.BookService;
 import com.asib27.authentication.Locations.Location;
 import com.asib27.authentication.Locations.LocationService;
-import com.asib27.authentication.Payment.Payment;
-import com.asib27.authentication.Payment.PaymentService;
 import com.asib27.authentication.UserCloned.UserCloned;
 import com.asib27.authentication.UserCloned.UserClonedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,8 @@ public class TransactionController {
     BookService bookService;
     @Autowired
     UserClonedService userClonedService;
-    @Autowired
-    PaymentService paymentService;
+//    @Autowired
+//    PaymentService paymentService;
     @Autowired
     LocationService locationService;
 
@@ -66,13 +64,13 @@ public class TransactionController {
         return transactionService.addTransaction(transaction);
     }
 
-    @PostMapping("/add/{tx_id}/payment/{u_id}")
-    public Transaction addPayment(@PathVariable Long tx_id,@PathVariable Long u_id){
-        Payment payment = paymentService.findPaymentById(u_id);
-        Transaction transaction = transactionService.findTransactionByID(tx_id);
-        transaction.setPayment(payment);
-        return transactionService.addTransaction(transaction);
-    }
+//    @PostMapping("/add/{tx_id}/payment/{u_id}")
+//    public Transaction addPayment(@PathVariable Long tx_id,@PathVariable Long u_id){
+//        Payment payment = paymentService.findPaymentById(u_id);
+//        Transaction transaction = transactionService.findTransactionByID(tx_id);
+//        transaction.setPayment(payment);
+//        return transactionService.addTransaction(transaction);
+//    }
 
     @PostMapping("/add/{tx_id}/location/{u_id}")
     public Transaction addLocationOfTransaction(@PathVariable Long tx_id,@PathVariable Long u_id){
