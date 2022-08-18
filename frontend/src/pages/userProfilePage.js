@@ -72,10 +72,10 @@ export default function UserProfilePage(){
               <UserDetailsForm/>
             </TabPanel>
             <TabPanel value={tabValue} index={2}>
-            Item Three
+              Payment
             </TabPanel>
             <TabPanel value={tabValue} index={3}>
-            Item Four
+              Complains and Support
             </TabPanel>
             <TabPanel value={tabValue} index={4}>
             Item Five
