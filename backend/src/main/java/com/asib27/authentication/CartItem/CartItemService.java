@@ -69,4 +69,9 @@ public class CartItemService {
     public void reduce_the_count_of_cartBooks(UserCloned user) {
         cartItemRepository.reduce_the_count_of_cartBooks(user.getId());
     }
+
+    @Transactional
+    public void delete_cart_items(UserCloned user) {
+        cartItemRepository.delete_cart_items(user.getId());
+    }
 }

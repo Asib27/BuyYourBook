@@ -37,4 +37,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
                    "where user_id = ?1) as table1 where isbn = table1.id;", nativeQuery = true)
     void reduce_the_count_of_cartBooks(Long user_id);
 
+    @Modifying
+    @Query(value = "DELETE FROM cart_item where user_id=?1", nativeQuery = true)
+    void delete_cart_items(Long id);
 }

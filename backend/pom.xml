@@ -67,7 +67,14 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-    </dependencies>
+		<!-- https://mvnrepository.com/artifact/com.stripe/stripe-java -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>21.2.0</version>
+		</dependency>
+
+	</dependencies>
 
 	<build>
 		<plugins>

@@ -75,6 +75,7 @@ public class CartItemController {
     public void buyCartItems(){
         UserCloned user = userClonedService.getCurrentUser();
         cartItemService.reduce_the_count_of_cartBooks(user);
+        cartItemService.delete_cart_items(user);
     }
 
 
