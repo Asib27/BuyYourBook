@@ -3,7 +3,6 @@ import CommentCardHolder from "../components/comment_holder";
 import reviewService from "../services/review.service";
 import BookCardLarge from "../components/book_card_large";
 import { useParams } from "react-router-dom";
-import RichTextEditor from "@mantine/rte";
 import { useState } from "react";
 
 const ReviewLeftPan = (props)=>{
