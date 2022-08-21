@@ -4,7 +4,8 @@ import * as React from 'react';
 
 import ProfileOverviewTab from '../components/profileOverviewTab';
 import UserDetailsForm from '../components/user_details_form_tab';
-import Dashboard from './index'
+import Dashboard from './index';
+import Customers from './customers';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -82,7 +83,7 @@ export default function UserProfilePage(){
               <Dashboard/>
             </TabPanel>
             <TabPanel value={tabValue} index={5}>
-            Item Six
+              <Customers/>
             </TabPanel>
             <TabPanel value={tabValue} index={6}>
             Item Seven

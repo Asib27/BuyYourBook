@@ -1,4 +1,4 @@
-import Head from 'next/head';
+// import Head from 'next/head';
 import { Box, Container } from '@mui/material';
 import { CustomerListResults } from '../components/customer/customer-list-results';
 import { CustomerListToolbar } from '../components/customer/customer-list-toolbar';
@@ -7,11 +7,11 @@ import { customers } from '../__mocks__/customers';
 
 const Customers = () => (
   <>
-    <Head>
+    {/* <Head>
       <title>
         Customers | Material Kit
       </title>
-    </Head>
+    </Head> */}
     <Box
       component="main"
       sx={{
