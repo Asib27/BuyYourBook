@@ -3,9 +3,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const NotFound = () => (
   <>
-      <title>
+      {/* <title>
         404 | Material Kit
-      </title>
+      </title> */}
     <Box
       component="main"
       sx={{
@@ -28,7 +28,7 @@ const NotFound = () => (
             color="textPrimary"
             variant="h1"
           >
-            404: The page you are looking for isn’t here
+            404: The page you are looking for isnt here
           </Typography>
           <Typography
             align="center"

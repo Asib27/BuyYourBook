@@ -7,6 +7,9 @@ import UserDetailsForm from '../components/user_details_form_tab';
 import Dashboard from './index';
 import Customers from './customers';
 import Products from './products';
+import Account from './account';
+import Settings from './settings';
+import NotFound from './404';
 
 
 function TabPanel(props) {
@@ -88,7 +91,7 @@ export default function UserProfilePage(){
               <Customers/>
             </TabPanel>
             <TabPanel value={tabValue} index={6}>
-              <Products/>
+              <NotFound/>
             </TabPanel>
       </Box>
     );
