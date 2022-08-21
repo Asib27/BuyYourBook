@@ -6,6 +6,8 @@ import ProfileOverviewTab from '../components/profileOverviewTab';
 import UserDetailsForm from '../components/user_details_form_tab';
 import Dashboard from './index';
 import Customers from './customers';
+import Products from './products';
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -86,7 +88,7 @@ export default function UserProfilePage(){
               <Customers/>
             </TabPanel>
             <TabPanel value={tabValue} index={6}>
-            Item Seven
+              <Products/>
             </TabPanel>
       </Box>
     );
