@@ -1,4 +1,4 @@
-import Head from 'next/head';
+// import Head from 'next/head';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import { AccountProfile } from '../components/account/account-profile';
 import { AccountProfileDetails } from '../components/account/account-profile-details';
@@ -6,11 +6,11 @@ import { DashboardLayout } from '../components/dashboard-layout';
 
 const Account = () => (
   <>
-    <Head>
+    {/* <Head>
       <title>
         Account | Material Kit
       </title>
-    </Head>
+    </Head> */}
     <Box
       component="main"
       sx={{
