@@ -88,7 +88,7 @@ export default function UserProfilePage(){
               <Dashboard/>
             </TabPanel>
             <TabPanel value={tabValue} index={5}>
-              <Customers/>
+              <Products/>
             </TabPanel>
             <TabPanel value={tabValue} index={6}>
               <NotFound/>

@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import bookService from '../services/book.service';
 
-import { Modal } from '@mantine/core';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
 import ShareIcon from '@mui/icons-material/Share';
@@ -86,18 +85,10 @@ export default function BookCardLarge(props) {
       
         setOpenSnackbar(false);
     }
-
+    
     const handleModalClose = ()=>{
         setOpenedModal(false);
     }
-
-
-    const bookId = props.bookId;
-    const Book = bookService.getBookById(bookId);
-
-    const BookName = Book.name;
-    const BookAuthor = Book.author;
-    const description = Book.description;
 
     const onClickingBuy = ()=>{
         const item  = {
@@ -127,6 +118,51 @@ export default function BookCardLarge(props) {
         setReviewText('');
         setOpenedModal(false);
     }
+
+    const CommentModal = ()=>{
+        return (
+            <Dialog 
+                open={openedModal} 
+                onClose={handleModalClose}
+                maxWidth='sm'
+                fullWidth
+            >
+                <DialogTitle>Review</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {
+                            "Write review about \"" + BookName + "\" by \""
+                            + BookAuthor + "\" . You review will be posted publicly. "
+                        }
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        placeholder="Type here"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        multiline
+                        value={reviewText}
+                        onChange={(event) => setReviewText(event.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleModalClose}>Cancel</Button>
+                    <Button onClick={onReviewSubmit}>Submit</Button>
+                </DialogActions>
+            </Dialog>
+        )
+    }
+
+
+    const bookId = props.bookId;
+    const Book = bookService.getBookById(bookId);
+
+    const BookName = Book.name;
+    const BookAuthor = Book.author;
+    const description = Book.description;
 
   return (
     <Card sx={{ display: 'flex' }}>
@@ -170,38 +206,7 @@ export default function BookCardLarge(props) {
             </Alert>
         </Snackbar>
 
-        <Dialog 
-            open={openedModal} 
-            onClose={handleModalClose}
-            maxWidth='sm'
-            fullWidth
-        >
-            <DialogTitle>Review</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    {
-                        "Write review about \"" + BookName + "\" by \""
-                        + BookAuthor + "\" . You review will be posted publicly. "
-                    }
-                </DialogContentText>
-            <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                placeholder="Type here"
-                type="text"
-                fullWidth
-                variant="standard"
-                multiline
-                value={reviewText}
-                onChange={(event) => setReviewText(event.target.value)}
-            />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleModalClose}>Cancel</Button>
-                <Button onClick={onReviewSubmit}>Submit</Button>
-            </DialogActions>
-        </Dialog>
+        <CommentModal/>        
     </Card>
   );
 }
