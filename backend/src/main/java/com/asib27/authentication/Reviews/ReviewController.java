@@ -88,7 +88,7 @@ public class ReviewController {
     public Map<Integer, String> getRatingPercentage(@PathVariable String book_name){
         Long id = bookService.getBookIdByName(book_name);
         List<Object[]> result = reviewService.getRatingPercentage(id);
-        Map<Integer, String> map = new HashMap();
+        Map<Integer, String> map = new HashMap<>();
         for(Object[] x:result){
             map.put((Integer) x[0], x[1].toString());
         }

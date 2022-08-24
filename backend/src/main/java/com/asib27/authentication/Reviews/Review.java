@@ -4,9 +4,7 @@ import com.asib27.authentication.Book.Book;
 import com.asib27.authentication.UserCloned.UserCloned;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Table(name = "reviews")
 @Entity(name = "reviews")
