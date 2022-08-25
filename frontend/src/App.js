@@ -9,6 +9,7 @@ import BuyPage from './pages/buyPage';
 import HomePage from './pages/homePage';
 import ReviewPage from './pages/reviewPage';
 import UserProfilePage from './pages/userProfilePage';
+import Test from './pages/test';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path='/profile' element={<UserProfilePage/>}/>
           <Route path='/home' element={<HomePage/>}/>
           <Route path='/buy' element={<BuyPage/>}/>
+          <Route path='/test' element={<Test/>}/>
         </Routes>
       </CartProvider>
     </div>

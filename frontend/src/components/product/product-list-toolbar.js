@@ -7,7 +7,7 @@ import {
   InputAdornment,
   SvgIcon,
   Typography,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Input
 } from '@mui/material';
 import { Download as DownloadIcon } from '../../icons/download';
 import { Search as SearchIcon } from '../../icons/search';
@@ -18,24 +18,44 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import {  TextField as FormicTextField }  from 'formik-mui' ;
 
 import * as Yup from 'yup';
+import axios from 'axios';
 
-export const ProductListToolbar = (props) => {
-  const [openedModal, setOpenedModal] = useState(false);
-  const handleModalClose = ()=> setOpenedModal(false);
+const BookForm = ({closeModal})=>{
+  const uploadImage = async (img)=>{
+    let body = new FormData();
+    body.set('key', '8a238e7465d66d91a7257d177326e45c');
+    body.append('image', img);
 
-  const BookForm = ()=>{
-    return (
-      <Formik
-            initialValues={{isbn: '', name: '', edition: '', language: '',
-                            genre: '', quantity_available: '', author: '', publications: ''
-                          }}
-            validationSchema={Yup.object({
-              
-            })}
-            onSubmit={async (values, { resetForm }) => {
-              console.log(values);
-            }}
-          >
+    return await axios({
+        method: 'post',
+        url: 'https://api.imgbb.com/1/upload',
+        data: body
+      })
+  }
+
+  return (
+    <Formik
+          initialValues={{isbn: '', name: '', edition: '', language: '',
+                          genre: '', quantity_available: 1, author: '', publications: '',
+                          image: null,
+                        }}
+          validationSchema={Yup.object({
+            isbn: Yup.string().length(13).required(),
+            name: Yup.string().required(),
+            author: Yup.string().required(),
+            publications: Yup.string().required(),
+            genre: Yup.string().required(),
+            quantity_available: Yup.number(),
+            image: Yup.mixed().required(),
+          })}
+          onSubmit={async (values, { resetForm }) => {
+            const data = await uploadImage(values.image);
+            console.log(values);
+            console.log(data.data);
+            closeModal();
+          }}
+        >
+          {(formProps)=>(
             <Form>
               <Field 
                 component={FormicTextField}
@@ -96,18 +116,6 @@ export const ProductListToolbar = (props) => {
                 component={FormicTextField}
                 margin="normal"
                 fullWidth
-                required
-                id="language"
-                label="language"
-                name="language"
-              />
-              <ErrorMessage name='language'/>
-
-              <Field 
-                component={FormicTextField}
-                margin="normal"
-                fullWidth
-                required
                 id="language"
                 label="language"
                 name="language"
@@ -129,12 +137,17 @@ export const ProductListToolbar = (props) => {
                 component={FormicTextField}
                 margin="normal"
                 fullWidth
-                required
                 id="quantity_available"
                 label="Quantity Available"
                 name="quantity_available"
               />
               <ErrorMessage name='quantity_available'/>
+
+              <Input type="file" name="image" onChange={(event)=>{
+                  formProps.setFieldValue('image', event.target.files[0]);
+                }}
+              />
+              <ErrorMessage name='image'/>
       
               <Button
                 type="submit"
@@ -146,9 +159,14 @@ export const ProductListToolbar = (props) => {
               </Button>
 
             </Form>
-          </Formik>
-    );
-  }
+          )}
+        </Formik>
+  );
+}
+
+export const ProductListToolbar = (props) => {
+  const [openedModal, setOpenedModal] = useState(false);
+  const handleModalClose = ()=> setOpenedModal(false);
 
   const ProductAddDialog = (props) =>{
     return (
@@ -164,10 +182,10 @@ export const ProductListToolbar = (props) => {
                         Add product info here
                     </DialogContentText>
                     
-                    <BookForm/>
+                    <BookForm closeModal={handleModalClose}/>
 
-                </DialogContent>
-                <DialogActions>
+                </DialogContent >
+                <DialogActions >
                     <Button onClick={props.handleModalClose} fullWidth>Cancel</Button>
                 </DialogActions>
       </Dialog>
