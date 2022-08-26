@@ -2,8 +2,8 @@ import { Box, Container, Tab, Tabs, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 
-import ProfileOverviewTab from '../components/profileOverviewTab';
-import UserDetailsForm from '../components/user_details_form_tab';
+import ProfileOverviewTab from '../components/profile/profileOverviewTab';
+import UserDetailsForm from '../components/profile/user_details_form_tab';
 import Dashboard from './index';
 import Customers from './customers';
 import Products from './products';

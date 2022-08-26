@@ -1,7 +1,7 @@
 import { Avatar, Box, Card, CardActions, CardHeader, IconButton, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
 import ProfileBottomContent from "./profileExtended";
-import UserService from "../services/user.service";
+import UserService from "../../services/user.service";
 
 const ProfileOverview = (props) =>{
     const profile = props.profile;
