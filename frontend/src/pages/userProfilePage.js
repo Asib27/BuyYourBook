@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Container, Tab, Tabs, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 
@@ -24,7 +24,7 @@ function TabPanel(props) {
         {...other}
       >
         {value === index && (
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ p: 3 , width: '80%'}}>
             <Typography component='span'>{children}</Typography>
           </Box>
         )}
@@ -64,35 +64,38 @@ export default function UserProfilePage(){
             aria-label="Profile tab view"
             sx={{ borderRight: 1, borderColor: 'divider', width: '20%' }}
             >
-            <Tab label="Overview" {...a11yProps(0)} />
-            <Tab label="Edit profile" {...a11yProps(1)} />
-            <Tab label="Item Three" {...a11yProps(2)} />
-            <Tab label="Item Four" {...a11yProps(3)} />
-            <Tab label="Item Five" {...a11yProps(4)} />
-            <Tab label="Item Six" {...a11yProps(5)} />
-            <Tab label="Item Seven" {...a11yProps(6)} />
+              <Tab label="Overview" {...a11yProps(0)} />
+              <Tab label="Edit profile" {...a11yProps(1)} />
+              <Tab label="Item Three" {...a11yProps(2)} />
+              <Tab label="Item Four" {...a11yProps(3)} />
+              <Tab label="Item Five" {...a11yProps(4)} />
+              <Tab label="Item Six" {...a11yProps(5)} />
+              <Tab label="Item Seven" {...a11yProps(6)} />
             </Tabs>
-            <TabPanel value={tabValue} index={0}>
-              <ProfileOverviewTab tabchange={setTabValue}/>
-            </TabPanel>
-            <TabPanel value={tabValue} index={1}>
-              <UserDetailsForm/>
-            </TabPanel>
-            <TabPanel value={tabValue} index={2}>
-              Payment
-            </TabPanel>
-            <TabPanel value={tabValue} index={3}>
-              Complains and Support
-            </TabPanel>
-            <TabPanel value={tabValue} index={4}>
-              <Dashboard/>
-            </TabPanel>
-            <TabPanel value={tabValue} index={5}>
-              <Products/>
-            </TabPanel>
-            <TabPanel value={tabValue} index={6}>
-              <NotFound/>
-            </TabPanel>
+            <Container sx={{width: '80%'}}>
+              <TabPanel value={tabValue} index={0}>
+                <ProfileOverviewTab tabchange={setTabValue}/>
+              </TabPanel>
+              <TabPanel value={tabValue} index={1}>
+                <UserDetailsForm/>
+              </TabPanel>
+              <TabPanel value={tabValue} index={2}>
+                Payment
+              </TabPanel>
+              <TabPanel value={tabValue} index={3}>
+                Complains and Support
+              </TabPanel>
+              <TabPanel value={tabValue} index={4}>
+                <Dashboard/>
+              </TabPanel>
+              <TabPanel value={tabValue} index={5}>
+                <Products/>
+              </TabPanel>
+              <TabPanel value={tabValue} index={6}>
+                <NotFound/>
+              </TabPanel>
+            </Container>
+            
       </Box>
     );
 }

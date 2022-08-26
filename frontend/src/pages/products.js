@@ -21,7 +21,7 @@ const Products = () =>{
           py: 8
         }}
       >
-        <Container maxWidth={false}>
+        <Container maxWidth={false} >
           <ProductListToolbar />
           <Box sx={{ pt: 3 }}>
             <Grid
@@ -60,10 +60,10 @@ const Products = () =>{
   )
 };
 
-Products.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+// Products.getLayout = (page) => (
+//   <DashboardLayout>
+//     {page}
+//   </DashboardLayout>
+// );
 
 export default Products;
