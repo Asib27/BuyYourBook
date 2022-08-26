@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/auth.service';
+import UserService from '../services/user.service';
 
 const pages = ['Home', 'Buy'];
 const pageToRoute = {
@@ -58,6 +59,8 @@ const NavigationBar = () => {
     } 
     navigate(pageToRoute[value]);
   }
+
+  const userAvatar = UserService.getUserAvatar();
 
   return (
     <AppBar position="static">
@@ -152,7 +155,9 @@ const NavigationBar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={userAvatar.username} src={userAvatar.image}>
+                  {userAvatar.username.charAt(0)}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu

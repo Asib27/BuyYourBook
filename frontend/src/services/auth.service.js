@@ -33,13 +33,9 @@ const login = (username, password) => {
 const logout = () => {
   localStorage.removeItem("user");
 };
-const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem("user"));
-};
 const AuthService = {
   register,
   login,
-  logout,
-  getCurrentUser,
+  logout
 };
 export default AuthService;
