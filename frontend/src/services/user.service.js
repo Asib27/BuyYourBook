@@ -1,6 +1,10 @@
 
 const getUserData = ()=>{
-    return JSON.parse(localStorage.getItem("user"));
+    const user =  JSON.parse(localStorage.getItem("user"));
+    delete user.accessToken;
+    delete user.refreshToken;
+
+    return user;
 }
 
 const getUsername = ()=>{
@@ -15,6 +19,7 @@ const getUserAvatar = ()=>{
         image: user.image,
     }
 }
+
 
 const getUserDescriber = ()=>{
     return "Newbie";
