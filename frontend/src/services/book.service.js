@@ -1,3 +1,8 @@
+import axios from "axios";
+import AuthService from "./auth.service";
+
+const API_URL = "https://damp-tundra-37123.herokuapp.com/api/book/";
+
 const booklist = [
     {
         bookId: 1,
@@ -81,7 +86,34 @@ const booklist = [
     },
 ];
 
-const getBookIds = ()=>{
+// export const errorUtils = {
+//     getError: (error) => {
+//       let e = error;
+//       if (error.response) {
+//         e = error.response.data;                   // data, status, headers
+//         if (error.response.data && error.response.data.error) {
+//           e = error.response.data.error;           // my app specific keys override
+//         }
+//       } else if (error.message) {
+//         e = error.message;
+//       } else {
+//         e = "Unknown error occured";
+//       }
+//       return e;
+//     },
+//   };
+
+const getBookIds = async ()=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+    console.log(config);
+
+    let data = await axios.get(
+        API_URL + 'get/random/5', config
+    ).catch(err => console.log(err.response));
+    console.log(data);
     return booklist.map((book)=> book.bookId);
 }
 

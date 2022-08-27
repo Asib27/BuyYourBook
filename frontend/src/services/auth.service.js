@@ -30,12 +30,22 @@ const login = (username, password) => {
       }
     });
 };
+
+const getToken = ()=>{
+  const user = JSON.parse(localStorage.getItem("user"));
+  return {
+    jwtToken: user.accessToken,
+    refreshToken: user.refreshToken
+  }
+}
+
 const logout = () => {
   localStorage.removeItem("user");
 };
 const AuthService = {
   register,
   login,
-  logout
+  logout,
+  getToken
 };
 export default AuthService;
