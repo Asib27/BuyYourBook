@@ -113,8 +113,9 @@ const getBookIds = async ()=>{
     let data = await axios.get(
         API_URL + 'get/random/5', config
     ).catch(err => console.log(err.response));
-    console.log(data);
-    return booklist.map((book)=> book.bookId);
+    console.log(data.data);
+    
+    return data.data;
 }
 
 const getBookById = (id)=>{

@@ -52,11 +52,11 @@ const ReviewRightPan = (props)=>{
 
 export default function ReviewPage(props){
     const params = useParams();
-    const bookId = params.bookid;
+    const bookId = params.isbn;
 
-    const initialValue =
-  '<p>Your initial <b>html value</b> or an empty string to init editor without value</p>';
-    const [review, setReview] = useState(initialValue);
+//     const initialValue =
+//   '<p>Your initial <b>html value</b> or an empty string to init editor without value</p>';
+//     const [review, setReview] = useState(initialValue);
 
     return (
         <Stack sx={{width: '80%'}} spacing={5}>

@@ -7,12 +7,12 @@ import { useEffect, useState } from "react";
 
 export default function HomePage(props) {
     const [loaded, setLoaded] = useState(false);
-    const [bookIds, setBookIds] = useState([]);
+    const [books, setBooks] = useState([]);
 
     useEffect(() => {
         async function fetchData(){
             const bookId = await bookService.getBookIds();
-            setBookIds(bookId);
+            setBooks(bookId);
             setLoaded(true);
         }
         fetchData();
@@ -25,8 +25,8 @@ export default function HomePage(props) {
                 <Box >
                     <Carousel align='start' slideSize="70%" height={200} slideGap="sm" controlsOffset="xs" controlSize={29} loop>
                         {
-                            bookIds.map((id)=>{
-                                return (<BookCardMedium key={id} book={bookService.getBookById(id)}/>);
+                            books.map((book, idx)=>{
+                                return (<BookCardMedium key={idx}  book={book}/>);
                             })
                         }
                     </Carousel>

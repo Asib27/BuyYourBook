@@ -4,24 +4,29 @@ import CommentIcon from '@mui/icons-material/Comment';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Card, CardActionArea, CardActions, CardHeader, CardMedia, IconButton} from "@mui/material";
+import kConst from "../const";
 
 
 export default function BookCardMedium(props) {
     const Book = props.book;
     const navigate = useNavigate();
+    const placeholder_image = kConst.placeholder_image;
 
     return (
-        <Card >
-            <CardActionArea onClick={()=> navigate('/book/' + Book.bookId)}>
+        <Card sx={{p : 1, }}>
+            <CardActionArea onClick={()=> navigate('/book/' + Book.isbn)}
+            >
                 <CardMedia
                     component="img"
-                    sx={{height: '100' , width: 'fit'}}
-                    image={Book.image}
+                    height="100"
+                    image={Book.image? Book.image: placeholder_image}
                     alt={Book.name}
+                    title={Book.name}
+                    sx={{ padding: "1em 1em 0 1em", objectFit: "contain" }}
                 />
                 <CardHeader 
                     title={Book.name}
-                    subheader={Book.author}
+                    subheader={Book.writersOfTheBook.map(wr=> wr.name).join(' , ')}
                 />
             </CardActionArea>
 
