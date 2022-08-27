@@ -11,6 +11,10 @@ import Account from './account';
 import Settings from './settings';
 import NotFound from './404';
 
+// role_user = overview, edit profile, payments, complain and support, follower
+// role admin = overview, edit profile, payments, follower, complain and support, Dashboard, customers, products
+// role author = overview, edit profile, payments, complain and support, follower, myBooks, analytics
+// role delivery = overview, edit profile, payments, complain and support, follower, deliveries, analytics
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
