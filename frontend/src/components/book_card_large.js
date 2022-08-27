@@ -5,18 +5,19 @@ import CardMedia from '@mui/material/CardMedia';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-import bookService from '../services/book.service';
 
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
 import ShareIcon from '@mui/icons-material/Share';
-import { AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, Snackbar } from '@mui/material';
+import { AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
 import { useCart } from 'react-use-cart';
 import { Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import { TextField } from 'formik-mui';
+
+import kConst from "../const";
 
 // import PropTypes from 'prop-types';
 // import ColorLensIcon from '@mui/icons-material/ColorLens';
@@ -59,7 +60,7 @@ const useModalHelper = ()=>{
     }
 
     const CommentModal = ({onSubmit, book})=>{
-        const author = book.writersOfTheBook.map(w=>w.name).join(' , ');
+        const author = book.writersOfTheBook.map(w=>w.name).join(' , ').trim();
         return (
             <Dialog 
                 open={openedModal} 
@@ -71,7 +72,7 @@ const useModalHelper = ()=>{
                 <DialogContent>
                     <DialogContentText>
                         {
-                            "Write review about \"" + book.name + "\" by \""
+                            "Write review about \"" + book.name.trim() + "\" by \""
                             + author + "\" . You review will be posted publicly. "
                         }
                     </DialogContentText>
@@ -165,21 +166,13 @@ const useModalHelper = ()=>{
 export default function BookCardLarge(props) {
 //   const theme = useTheme();
     const {addItem} = useCart();
-    
-    const {openedModal, setOpenedModal, CommentModal} = useModalHelper();
-    const { openSnackbar, setOpenSnackbar, SnackbarHelper} = useSnackbarHelper();
+    const { setOpenedModal, CommentModal} = useModalHelper();
+    const { setOpenSnackbar, SnackbarHelper} = useSnackbarHelper();
 
     const onClickingBuy = ()=>{
         const item  = {
             id: Book.isbn, 
-            book: {
-                bookId: 1,
-                image: "https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg",
-                name: "The art ",
-                author: "Knuth",
-                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vulputate purus quis metus gravida faucibus. Donec sit amet risus dapibus, scelerisque ligula sed, sodales nibh. Aenean tristique rutrum eros, ac molestie libero tempus at. In hac habitasse platea dictumst. Vivamus diam justo, ultricies nec tortor vel, efficitur tincidunt dui. Donec eget iaculis lorem",
-                price: "199",
-            }, 
+            book: Book,
             quantity: 1, 
             price: Book.price,
         }
@@ -198,25 +191,24 @@ export default function BookCardLarge(props) {
     }
 
     const Book = props.book;
-
-    const BookName = Book.name;
-    const BookAuthor = Book.writersOfTheBook.map(w=>w.name).join(' , ');;
+    const BookName = Book.name.trim();
+    const BookAuthor = Book.writersOfTheBook.map(w=>w.name).join(' , ').trim();;
     const description = Book.description;
 
   return (
-    <Card sx={{ display: 'flex' }}>
+    <Card sx={{ display: 'flex'}}>
         <CardMedia
             component="img"
-            sx={{ width: 151 }}
-            image={Book.image}
-            alt="Live from space album cover"
+            sx={{ width: 151 , p: 3}}
+            image={Book.image? Book.image: kConst.placeholder_image}
+            alt={BookName + " image"}
         />
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
-                <Typography component="div" variant="h5">
+                <Typography component="div" variant="h5" align='left'>
                     {BookName}
                 </Typography>
-                <Typography variant="subtitle1" color="text.secondary" component="div">
+                <Typography variant="subtitle1" color="text.secondary" component="div" align='left'>
                     {BookAuthor}
                 </Typography >
                 <Typography variant='body1' align='left'>
