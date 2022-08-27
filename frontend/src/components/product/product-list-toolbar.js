@@ -7,7 +7,7 @@ import {
   InputAdornment,
   SvgIcon,
   Typography,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Input
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Input
 } from '@mui/material';
 import { Download as DownloadIcon } from '../../icons/download';
 import { Search as SearchIcon } from '../../icons/search';
@@ -18,20 +18,9 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import {  TextField as FormicTextField }  from 'formik-mui' ;
 
 import * as Yup from 'yup';
-import axios from 'axios';
+import ImageService from '../../services/image.service';
 
 const BookForm = ({closeModal})=>{
-  const uploadImage = async (img)=>{
-    let body = new FormData();
-    body.set('key', '8a238e7465d66d91a7257d177326e45c');
-    body.append('image', img);
-
-    return await axios({
-        method: 'post',
-        url: 'https://api.imgbb.com/1/upload',
-        data: body
-      })
-  }
 
   return (
     <Formik
@@ -49,9 +38,9 @@ const BookForm = ({closeModal})=>{
             image: Yup.mixed().required(),
           })}
           onSubmit={async (values, { resetForm }) => {
-            const data = await uploadImage(values.image);
+            const data = await ImageService.uploadImage(values.image);
             console.log(values);
-            console.log(data.data);
+            console.log(data);
             closeModal();
           }}
         >

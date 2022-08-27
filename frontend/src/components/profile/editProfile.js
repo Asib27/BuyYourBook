@@ -1,6 +1,5 @@
 import { Button, Card, CardContent, CardHeader, CardMedia, Grid, Stack } from "@mui/material";
-import axios from "axios";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import {  Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import { useState } from "react";
 import * as Yup from 'yup';
@@ -221,7 +220,7 @@ const ProfileForm = (props)=>{
 
     return (
         <Card raised>
-            <CardHeader titile='Profile'/>
+            <CardHeader title='Profile'/>
             <CardContent>
                 <Formik
                     initialValues={{
@@ -288,7 +287,154 @@ const ProfileForm = (props)=>{
     );
 }
 
-export default function UserDetailsForm(props){
+const DescriptionForm = (props)=>{
+    return (
+        <Card raised>
+            <CardHeader title='About You'/>
+            <CardContent>
+                <Formik
+                    initialValues={{
+                        description: '',
+                        favourite_books: '',
+                        favourite_genre: ''
+                    }}
+                    validationSchema={
+                        Yup.object({
+                            description: Yup.string(),
+                            favourite_books: Yup.string(),
+                            favourite_genre: Yup.string(),
+                        })
+                    }
+                    onSubmit={(values, {setSubmitting})=>{
+                        console.log(values);
+                    }}
+                >
+                    {formik=>(
+                        <Form>
+                            <Field
+                                component={TextField}
+                                label='Description'
+                                name='description'
+                                id='description'
+                                margin='normal'
+                                multiline
+                                rows={2}
+                                fullWidth
+                            />
+
+                            <Field
+                                component={TextField}
+                                label='Favourite Books'
+                                name='favourite_books'
+                                id='favourite_books'
+                                margin='normal'
+                                multiline
+                                rows={2}
+                                fullWidth
+                            />
+
+                            <Field
+                                component={TextField}
+                                label='Favourite Genre'
+                                name='favourite_genre'
+                                id='favourite_genre'
+                                margin='normal'
+                                multiline
+                                rows={2}
+                                fullWidth
+                            />
+
+                            <Button
+                                type="submit"
+                                color='primary'
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Submit
+                            </Button>
+                        </Form>
+                    )}
+
+                </Formik>
+            </CardContent>
+        </Card>
+    )
+}
+
+const AddressForm = (props)=>{
+    return (
+        <Card raised>
+            <CardHeader title='Your Address'/>
+            <CardContent>
+                <Formik
+                    initialValues={{    
+                        streetAddress: '', 
+                        district: '', 
+                        country: '', 
+                    }}
+                    validationSchema={
+                        Yup.object({
+                            streetAddress: Yup.string(),
+                            district: Yup.string(),
+                            country: Yup.string(),
+                        })
+                    }
+                    onSubmit={(values, {setSubmitting})=>{
+                        console.log(values);
+                    }}
+                >
+                    {formik=>(
+                        <Form>
+                            <Field
+                                component={TextField}
+                                margin="normal"
+                                fullWidth
+                                id="streetAddress"
+                                label="Street Address"
+                                name="streetAddress"
+                                autoComplete="street-address"
+                            />
+
+                            <Field
+                                component={TextField}
+                                margin="normal"
+                                fullWidth
+                                id="district"
+                                label="District"
+                                name="district"
+                                autoComplete="address-level1"
+                            />
+
+                            <Field
+                                component={TextField}
+                                margin="normal"
+                                fullWidth
+                                id="country"
+                                label="Country"
+                                name="country"
+                                autoComplete="country-name"
+                            />
+
+                            <Button
+                                type="submit"
+                                color='primary'
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Submit
+                            </Button>
+                        </Form>
+                    )}
+
+                </Formik>
+            </CardContent>
+        </Card>
+    )
+}
+
+export default function EditProfile(props){
     const userInfo = UserService.getUserData();
 
     return (
@@ -304,7 +450,7 @@ export default function UserDetailsForm(props){
                     xl={6}
                     xs={12}
                 >
-                    <PlatformInfoForm/>
+                    <PlatformInfoForm userInfo={userInfo}/>
                 </Grid>
 
                 <Grid
@@ -314,7 +460,7 @@ export default function UserDetailsForm(props){
                     xl={6}
                     xs={12}
                 >
-                    <PersonalInfoForm/>
+                    <PersonalInfoForm userInfo={userInfo}/>
                 </Grid>
 
                 <Grid
@@ -326,80 +472,27 @@ export default function UserDetailsForm(props){
                 >
                     <ProfileForm/>
                 </Grid>
-          </Grid>
-            <CardHeader
-                title='Personal Information'
-            />
-            <Formik
-                initialValues={{
-                    firstname: '', 
-                    lastname: '', 
-                    streetAddress: '', 
-                    district: '', 
-                    country: '', 
-                    phone: '', 
-                    BackupPhoneNo: ''
-                }}
-                validationSchema={Yup.object({
-                    
-                })}
-                onSubmit={(values, { setSubmitting }) => {
-                    console.log(values);
-                    setSubmitting(false);
-                }}
-            >
-            {formic => (
-                <Form>
-                    
 
-                    <Field
-                        component={TextField}
-                        margin="normal"
-                        fullWidth
-                        id="streetAddress"
-                        label="Street Address"
-                        name="streetAddress"
-                        autoComplete="street-address"
-                    />
-                    <ErrorMessage name='streetAddress'/>
+                <Grid
+                    item
+                    lg={6}
+                    sm={6}
+                    xl={6}
+                    xs={12}
+                >
+                    <AddressForm/>
+                </Grid>
 
-                    <Field
-                        component={TextField}
-                        margin="normal"
-                        fullWidth
-                        id="district"
-                        label="District"
-                        name="district"
-                        autoComplete="address-level1"
-                    />
-                    <ErrorMessage name='district'/>
-
-                    <Field
-                        component={TextField}
-                        margin="normal"
-                        fullWidth
-                        id="country"
-                        label="Country"
-                        name="country"
-                        autoComplete="country-name"
-                    />
-                    <ErrorMessage name='country'/>
-
-                    
-
-                    <Button
-                        type="submit"
-                        color='primary'
-                        fullWidth
-                        variant="contained"
-                        onClick={()=> formic.values.checked=true}
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        Submit
-                    </Button>
-                </Form>
-            )}
-          </Formik>
+                <Grid
+                    item
+                    lg={8}
+                    sm={8}
+                    xl={8}
+                    xs={12}
+                >
+                    <DescriptionForm/>
+                </Grid>
+            </Grid>
         </Card>
     )
 };

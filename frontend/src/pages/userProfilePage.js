@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 
 import ProfileOverviewTab from '../components/profile/profileOverviewTab';
-import UserDetailsForm from '../components/profile/user_details_form_tab';
+import EditProfile from '../components/profile/editProfile';
 import Dashboard from './index';
 import Customers from './customers';
 import Products from './products';
@@ -77,7 +77,7 @@ export default function UserProfilePage(){
                 <ProfileOverviewTab tabchange={setTabValue}/>
               </TabPanel>
               <TabPanel value={tabValue} index={1}>
-                <UserDetailsForm/>
+                <EditProfile/>
               </TabPanel>
               <TabPanel value={tabValue} index={2}>
                 Payment
