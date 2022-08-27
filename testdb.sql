@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.4
--- Dumped by pg_dump version 14.4
+-- Dumped from database version 14.5 (Ubuntu 14.5-1.pgdg22.04+1)
+-- Dumped by pg_dump version 14.5 (Ubuntu 14.5-1.pgdg22.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -167,7 +167,7 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.author_of_books (
-    book_id bigint NOT NULL,
+    book_id character varying(13) NOT NULL,
     author_id bigint NOT NULL
 );
 
@@ -213,7 +213,7 @@ ALTER SEQUENCE public.authors_id_seq OWNED BY public.authors.id;
 --
 
 CREATE TABLE public.books (
-    isbn bigint NOT NULL,
+    isbn character varying(13) NOT NULL,
     edition integer NOT NULL,
     genre character varying(50) NOT NULL,
     language character varying(50) NOT NULL,
@@ -232,7 +232,7 @@ ALTER TABLE public.books OWNER TO postgres;
 
 CREATE TABLE public.books_in_transaction (
     tx_id bigint NOT NULL,
-    isbn bigint NOT NULL
+    isbn character varying(13) NOT NULL
 );
 
 
@@ -295,13 +295,58 @@ ALTER SEQUENCE public.bought_items_id_seq OWNED BY public.bought_items.id;
 
 
 --
+-- Name: cart; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cart (
+    cart_id bigint NOT NULL,
+    user_id bigint
+);
+
+
+ALTER TABLE public.cart OWNER TO postgres;
+
+--
+-- Name: cart_book; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cart_book (
+    cart_id bigint NOT NULL,
+    book_id character varying(13) NOT NULL
+);
+
+
+ALTER TABLE public.cart_book OWNER TO postgres;
+
+--
+-- Name: cart_cart_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cart_cart_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cart_cart_id_seq OWNER TO postgres;
+
+--
+-- Name: cart_cart_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cart_cart_id_seq OWNED BY public.cart.cart_id;
+
+
+--
 -- Name: cart_item; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.cart_item (
     id bigint NOT NULL,
     quantity integer,
-    book_id bigint,
+    book_id character varying(13),
     user_id bigint
 );
 
@@ -453,6 +498,41 @@ ALTER TABLE public.notification ALTER COLUMN not_id ADD GENERATED ALWAYS AS IDEN
 
 
 --
+-- Name: payment; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.payment (
+    payment_id bigint NOT NULL,
+    mobile character varying(255),
+    price integer,
+    type character varying(255)
+);
+
+
+ALTER TABLE public.payment OWNER TO postgres;
+
+--
+-- Name: payment_payment_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.payment_payment_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.payment_payment_id_seq OWNER TO postgres;
+
+--
+-- Name: payment_payment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.payment_payment_id_seq OWNED BY public.payment.payment_id;
+
+
+--
 -- Name: publisher; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -510,7 +590,7 @@ CREATE TABLE public.reviews (
     rating real,
     review character varying(500),
     upvotes integer,
-    book_id bigint,
+    book_id character varying(13),
     user_id bigint,
     add_date timestamp without time zone
 );
@@ -580,8 +660,8 @@ ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 CREATE TABLE public.transaction (
     tx_id bigint NOT NULL,
     location_id bigint,
-    user_id bigint,
-    total_price integer
+    payment_id bigint,
+    user_id bigint
 );
 
 
@@ -712,6 +792,13 @@ ALTER TABLE ONLY public.bought_items ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: cart cart_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cart ALTER COLUMN cart_id SET DEFAULT nextval('public.cart_cart_id_seq'::regclass);
+
+
+--
 -- Name: cart_item id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -730,6 +817,13 @@ ALTER TABLE ONLY public.coupon ALTER COLUMN id SET DEFAULT nextval('public.coupo
 --
 
 ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
+
+
+--
+-- Name: payment payment_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.payment ALTER COLUMN payment_id SET DEFAULT nextval('public.payment_payment_id_seq'::regclass);
 
 
 --
@@ -794,7 +888,6 @@ COPY public.authors (id, email, name) FROM stdin;
 2	wali@gmail.com	Sayed WaliUllah
 3	\N	Sophocles
 4	manik@gmail.com	Manik Bondhopadhay
-5	amn@gmail.com	Sadat Hossain
 \.
 
 
@@ -803,13 +896,12 @@ COPY public.authors (id, email, name) FROM stdin;
 --
 
 COPY public.books (isbn, edition, genre, language, name, price, quantity_available, publisher_id) FROM stdin;
+3	5	Romantic	Bangla	Choker bali	150	25	\N
+4	5	Play	English	Hamlet 	150	25	\N
+5	5	Novel	Bangla	Lalsalu	150	25	\N
 6	5	Novel	English	Pride and Prejudice	150	25	\N
-4	5	Play	English	Hamlet 	150	9	\N
-5	5	Novel	Bangla	Lalsalu	150	3	\N
-7	5	Novel	English	Oedipus Rex	150	21	\N
-3	5	Romantic	Bangla	Choker bali	150	17	\N
-1	5	Novel	Bangla	Padma Nodir Mazhi	150	15	4
-123456	5	Romantic	Bangla	Choker bali	150	25	\N
+7	5	Novel	English	Oedipus Rex	150	25	\N
+1	5	Novel	Bangla	Padma Nodir Mazhi	150	25	4
 \.
 
 
@@ -839,6 +931,22 @@ COPY public.bought_items (id, book_id, quantity, user_id) FROM stdin;
 11	1	2	4
 12	1	2	1
 13	1	2	1
+\.
+
+
+--
+-- Data for Name: cart; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cart (cart_id, user_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: cart_book; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cart_book (cart_id, book_id) FROM stdin;
 \.
 
 
@@ -883,7 +991,6 @@ COPY public.locations (id, district, postal_code, street_address) FROM stdin;
 8	Kolkata	42160	2692 Waubesa Lane
 9	Dhaka	1253	206 Forest Dale Drive
 10	Dhaka	1253	04 Valley Edge Crossing
-11	Netrokona	1230	Bagra,Challisha
 \.
 
 
@@ -908,6 +1015,14 @@ COPY public.notification (not_id, notify_whom, type) FROM stdin;
 
 
 --
+-- Data for Name: payment; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.payment (payment_id, mobile, price, type) FROM stdin;
+\.
+
+
+--
 -- Data for Name: publisher; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -920,7 +1035,6 @@ COPY public.publisher (id, name, location_id) FROM stdin;
 6	Prothoma	9
 7	Bangala Books	7
 8	Kolkata Books	8
-9	kamal brothers	3
 \.
 
 
@@ -940,47 +1054,6 @@ COPY public.refreshtoken (id, expiry_date, token, user_id) FROM stdin;
 9	2022-08-10 13:04:22.229693	4126297a-051e-401e-8082-eb6a5583d494	3
 10	2022-08-11 11:27:13.547176	044da956-5f3e-4e71-add2-7cbba1ca544f	3
 11	2022-08-11 11:34:05.780349	d70ad558-2a5e-4045-8be6-35e6f942a5ab	3
-12	2022-08-13 16:15:21.333896	e89e93e6-f39c-4bb2-924c-4a912cedf551	3
-13	2022-08-13 17:01:25.252109	ed3180cd-b14d-4970-8cb2-979674b0851a	3
-14	2022-08-13 17:02:58.457435	cef921bf-aa58-4945-8aa0-88302c6c062d	3
-15	2022-08-13 22:27:38.476188	1e2b3854-2c76-451f-95ca-a02c2cf844eb	4
-16	2022-08-13 22:41:04.862886	e027b140-15f6-4809-aab2-729e4e40029d	2
-17	2022-08-13 22:44:35.653531	8fc72a02-267b-428d-9301-e52d32be11b7	1
-18	2022-08-13 22:46:06.18093	e72734de-a643-4a8f-8f1f-15d90228cba9	3
-19	2022-08-13 22:54:48.514003	8bba1259-5f5b-4ab4-8d75-87a07bd5786d	2
-20	2022-08-14 10:19:38.153193	00d3ab3f-5024-4117-b242-900f4aade294	3
-21	2022-08-14 10:37:02.866523	1f7fe35b-d47a-4953-b697-c492113514e9	3
-22	2022-08-14 11:08:16.493072	e447b4bc-0a91-43cf-96e6-4826f458111e	3
-23	2022-08-14 11:14:58.961887	df04e8fb-1d8a-403e-828b-8d9b6a761735	3
-24	2022-08-14 11:18:23.903817	9d9b65d5-b8a2-48eb-b6fa-74815bfc351a	3
-25	2022-08-14 11:32:54.992598	aa549ed0-7a77-4733-8be8-990332839e38	3
-26	2022-08-14 11:40:00.436741	857e9d31-34ca-46b0-b3a5-2d32e1c2442d	3
-27	2022-08-14 11:44:21.736182	2aa386c1-8a4d-40aa-aef5-7383b21aefc8	3
-28	2022-08-14 12:27:41.504779	4ea3ae9f-d51b-492a-86c8-898db6408d06	3
-29	2022-08-14 12:28:50.895202	6d66c63e-62a6-473d-85d3-4c291ba18736	3
-30	2022-08-14 13:15:44.112372	a77276c3-07a3-416f-884a-b8c226d92ba2	3
-31	2022-08-16 21:50:57.080556	ee181469-b039-4100-a83a-5dd0a5ec1f32	3
-32	2022-08-16 22:29:49.668982	6378a338-40f4-4561-9e2f-fd410d9e431e	3
-33	2022-08-16 22:46:55.209702	1df342a5-bcec-40d4-8999-7b43a7c25d7c	3
-34	2022-08-16 23:28:11.035912	59a2b543-60b7-4fbe-8ab4-3bed05273a0b	3
-35	2022-08-20 15:45:01.230018	77470570-dfaf-4ef1-a551-b197212e9f2e	3
-36	2022-08-20 15:48:58.388767	c00eeb64-bb1f-4fce-b98f-58dd8e497e26	3
-37	2022-08-20 15:55:35.141852	e439cdff-40b0-4542-91bd-b0206fe42e22	3
-38	2022-08-25 22:27:48.483272	7ecfa08e-c54f-410f-a853-e251cb5fe11e	4
-39	2022-08-25 22:35:33.15515	ce6da723-216e-4060-8c8b-ebdfcd5a29e5	4
-40	2022-08-25 22:40:36.240104	e71ff265-ce31-415f-8595-adc1e59196eb	4
-41	2022-08-25 23:49:18.599254	8547252b-7387-4b3d-a605-7a8554c751c8	4
-42	2022-08-25 23:56:25.585246	e50b932d-9c28-46a2-b1c8-9fae51e6721f	4
-43	2022-08-26 12:55:35.164665	7d7735a2-8ce8-42ef-a741-40e1e6c45783	4
-44	2022-08-26 13:04:25.64358	ec1203d3-3401-4f22-801d-372d0ae280c3	4
-45	2022-08-26 13:07:54.956554	4d52644d-7b10-41e8-a3c4-3fcddb244957	4
-46	2022-08-26 13:10:16.036528	2ea49d5e-9a4e-4679-a034-b534cfc2fa6a	4
-47	2022-08-26 13:19:39.006266	d747f52c-aaff-4874-8362-5b7dc0782a35	4
-48	2022-08-26 13:19:47.411339	c94883e0-afca-42a6-abc9-6762799e4a04	1
-49	2022-08-26 13:57:09.245722	21d20d11-1e86-4d08-806e-1b3bad997807	1
-50	2022-08-26 14:02:33.373379	f8e6ea8d-e62b-4cc9-8177-22cce12751bb	1
-51	2022-08-26 14:05:22.347987	89f85261-58be-48b4-8ac1-c9d8ee8366c2	1
-52	2022-08-28 12:33:50.370192	bf20ad77-7082-48fc-a23b-d835c55c47b2	3
 \.
 
 
@@ -989,7 +1062,6 @@ COPY public.refreshtoken (id, expiry_date, token, user_id) FROM stdin;
 --
 
 COPY public.reviews (review_id, downvotes, rating, review, upvotes, book_id, user_id, add_date) FROM stdin;
-1	5	4	The book is excellent	7	1	3	2022-08-10 13:38:47
 \.
 
 
@@ -1008,12 +1080,7 @@ COPY public.roles (id, name) FROM stdin;
 -- Data for Name: transaction; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.transaction (tx_id, location_id, user_id, total_price) FROM stdin;
-1	2	4	\N
-2	2	4	\N
-3	2	4	\N
-4	1	1	\N
-5	1	1	300
+COPY public.transaction (tx_id, location_id, payment_id, user_id) FROM stdin;
 \.
 
 
@@ -1022,10 +1089,7 @@ COPY public.transaction (tx_id, location_id, user_id, total_price) FROM stdin;
 --
 
 COPY public.user_cloned (userid, email, username, location_id) FROM stdin;
-1	mod2@email.com	mod2	1
-4	kamal@gmail.com	kamal	2
-3	abc@email.com	Tanveer	9
-2	mod3@email.com	mod3	11
+4	kamal@gmail.com	kamal	\N
 \.
 
 
@@ -1061,7 +1125,7 @@ COPY public.users (id, email, passwd, username) FROM stdin;
 -- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.authors_id_seq', 5, true);
+SELECT pg_catalog.setval('public.authors_id_seq', 4, true);
 
 
 --
@@ -1076,6 +1140,13 @@ SELECT pg_catalog.setval('public.books_isbn_seq', 7, true);
 --
 
 SELECT pg_catalog.setval('public.bought_items_id_seq', 13, true);
+
+
+--
+-- Name: cart_cart_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cart_cart_id_seq', 1, false);
 
 
 --
@@ -1111,6 +1182,13 @@ SELECT pg_catalog.setval('public.locations_id_seq', 11, true);
 --
 
 SELECT pg_catalog.setval('public.notification_not_id_seq', 13, true);
+
+
+--
+-- Name: payment_payment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.payment_payment_id_seq', 1, false);
 
 
 --
@@ -1196,11 +1274,27 @@ ALTER TABLE ONLY public.bought_items
 
 
 --
+-- Name: cart_book cart_book_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cart_book
+    ADD CONSTRAINT cart_book_pkey PRIMARY KEY (cart_id, book_id);
+
+
+--
 -- Name: cart_item cart_item_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.cart_item
     ADD CONSTRAINT cart_item_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cart cart_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cart
+    ADD CONSTRAINT cart_pkey PRIMARY KEY (cart_id);
 
 
 --
@@ -1233,6 +1327,14 @@ ALTER TABLE ONLY public.locations
 
 ALTER TABLE ONLY public.notification
     ADD CONSTRAINT notification_pkey PRIMARY KEY (not_id);
+
+
+--
+-- Name: payment payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.payment
+    ADD CONSTRAINT payment_pkey PRIMARY KEY (payment_id);
 
 
 --
@@ -1354,6 +1456,30 @@ CREATE TRIGGER update_user_cloned BEFORE INSERT OR DELETE OR UPDATE ON public.us
 
 
 --
+-- Name: author_of_books author_of_books_book_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.author_of_books
+    ADD CONSTRAINT author_of_books_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(isbn);
+
+
+--
+-- Name: books_in_transaction books_in_transaction_isbn_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.books_in_transaction
+    ADD CONSTRAINT books_in_transaction_isbn_fkey FOREIGN KEY (isbn) REFERENCES public.books(isbn);
+
+
+--
+-- Name: cart_book cart_book_book_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cart_book
+    ADD CONSTRAINT cart_book_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(isbn);
+
+
+--
 -- Name: books fk1eujqvebj0cej9mcivv49grwi; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1367,6 +1493,14 @@ ALTER TABLE ONLY public.books
 
 ALTER TABLE ONLY public.cart_item
     ADD CONSTRAINT fk1wi7wavn5l3p1p6ky6x92klkg FOREIGN KEY (user_id) REFERENCES public.user_cloned(userid);
+
+
+--
+-- Name: cart_book fk3a7qu2xj02cbgbv7rjpjo8seb; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cart_book
+    ADD CONSTRAINT fk3a7qu2xj02cbgbv7rjpjo8seb FOREIGN KEY (cart_id) REFERENCES public.cart(cart_id);
 
 
 --
@@ -1386,14 +1520,6 @@ ALTER TABLE ONLY public.publisher
 
 
 --
--- Name: reviews fk6a9k6xvev80se5rreqvuqr7f9; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.reviews
-    ADD CONSTRAINT fk6a9k6xvev80se5rreqvuqr7f9 FOREIGN KEY (book_id) REFERENCES public.books(isbn);
-
-
---
 -- Name: transaction fk8vyn3xvfdku4nu6okf0w4y1n0; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1402,35 +1528,11 @@ ALTER TABLE ONLY public.transaction
 
 
 --
--- Name: notification fk_notify_user; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.notification
-    ADD CONSTRAINT fk_notify_user FOREIGN KEY (notify_whom) REFERENCES public.user_cloned(userid);
-
-
---
 -- Name: refreshtoken fka652xrdji49m4isx38pp4p80p; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.refreshtoken
     ADD CONSTRAINT fka652xrdji49m4isx38pp4p80p FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
--- Name: cart_item fkb58e5ca5nwhh6hm3sboyggghe; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cart_item
-    ADD CONSTRAINT fkb58e5ca5nwhh6hm3sboyggghe FOREIGN KEY (book_id) REFERENCES public.books(isbn);
-
-
---
--- Name: author_of_books fkf8bt16os7tm4ixs2yx3ruqnmd; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.author_of_books
-    ADD CONSTRAINT fkf8bt16os7tm4ixs2yx3ruqnmd FOREIGN KEY (book_id) REFERENCES public.books(isbn);
 
 
 --
@@ -1450,11 +1552,11 @@ ALTER TABLE ONLY public.books_in_transaction
 
 
 --
--- Name: books_in_transaction fkgbny592dwje2mwfylvji3jmp1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: cart fkgqefp98uipqo0ida1n0kvfqq3; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.books_in_transaction
-    ADD CONSTRAINT fkgbny592dwje2mwfylvji3jmp1 FOREIGN KEY (isbn) REFERENCES public.books(isbn);
+ALTER TABLE ONLY public.cart
+    ADD CONSTRAINT fkgqefp98uipqo0ida1n0kvfqq3 FOREIGN KEY (user_id) REFERENCES public.user_cloned(userid);
 
 
 --
@@ -1498,11 +1600,27 @@ ALTER TABLE ONLY public.transaction
 
 
 --
+-- Name: transaction fkq9m7rb5uydysanp8smxcovxlh; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transaction
+    ADD CONSTRAINT fkq9m7rb5uydysanp8smxcovxlh FOREIGN KEY (payment_id) REFERENCES public.payment(payment_id);
+
+
+--
 -- Name: author_of_books fkti8qgju32kb1t1962219u4dua; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.author_of_books
     ADD CONSTRAINT fkti8qgju32kb1t1962219u4dua FOREIGN KEY (author_id) REFERENCES public.authors(id);
+
+
+--
+-- Name: reviews reviews_book_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT reviews_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(isbn);
 
 
 --
