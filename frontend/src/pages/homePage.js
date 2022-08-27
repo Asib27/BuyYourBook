@@ -36,7 +36,7 @@ export default function HomePage(props) {
                     <CommentCard key={4} comment_id={0}/>
                 </Box>
             ) : (
-                <Skeleton variant="rectangular" animation="wave" height={100}/>
+                <Skeleton sx={{m : 2}} variant="rectangular" animation="wave" height={100}/>
                 
             )
         }

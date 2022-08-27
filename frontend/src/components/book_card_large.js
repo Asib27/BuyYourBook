@@ -24,6 +24,32 @@ const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+const useSnackbarHelper = ()=>{
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason)=>{
+        if (reason === 'clickaway') {
+            return;
+          }
+      
+        setOpenSnackbar(false);
+    }
+
+    const SnackbarHelper = ()=>(
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+            <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+            <AlertTitle>Success</AlertTitle>
+                Item added to cart succesfully.
+            </Alert>
+        </Snackbar>
+    )
+
+    return {
+        openSnackbar,
+        setOpenSnackbar,
+        SnackbarHelper
+    }
+}
+
 
 // class ColorPic extends React.Component {
 //   static propTypes = {
@@ -75,16 +101,10 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export default function BookCardLarge(props) {
 //   const theme = useTheme();
     const {addItem} = useCart();
-    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    
     const [openedModal, setOpenedModal] = React.useState(false);
+    const { openSnackbar, setOpenSnackbar, SnackbarHelper} = useSnackbarHelper();
     const [reviewText, setReviewText] = React.useState('');
-    const handleSnackbarClose = (event, reason)=>{
-        if (reason === 'clickaway') {
-            return;
-          }
-      
-        setOpenSnackbar(false);
-    }
     
     const handleModalClose = ()=>{
         setOpenedModal(false);
@@ -92,7 +112,7 @@ export default function BookCardLarge(props) {
 
     const onClickingBuy = ()=>{
         const item  = {
-            id: Book.bookId, 
+            id: Book.isbn, 
             book: {
                 bookId: 1,
                 image: "https://covers.zlibcdn2.com/covers299/books/11/c1/d2/11c1d24ddd14c46f714572faf7cebe6b.jpg",
@@ -105,6 +125,7 @@ export default function BookCardLarge(props) {
             price: Book.price,
         }
 
+        item.id = Book.isbn;
         addItem(item, 1);
         setOpenSnackbar(true);
     }
@@ -156,9 +177,7 @@ export default function BookCardLarge(props) {
         )
     }
 
-
-    const bookId = props.bookId;
-    const Book = bookService.getBookById(bookId);
+    const Book = props.book;
 
     const BookName = Book.name;
     const BookAuthor = Book.author;
@@ -199,12 +218,7 @@ export default function BookCardLarge(props) {
                 </IconButton>
             </Box>
         </Box>
-        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
-            <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-            <AlertTitle>Success</AlertTitle>
-                Item added to cart succesfully.
-            </Alert>
-        </Snackbar>
+        <SnackbarHelper/>
 
         <CommentModal/>        
     </Card>

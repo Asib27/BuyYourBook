@@ -1,9 +1,10 @@
-import { Box, LinearProgress, Paper, Rating, Stack, Typography } from "@mui/material";
+import { Box, LinearProgress, Paper, Rating, Skeleton, Stack, Typography } from "@mui/material";
 import CommentCardHolder from "../components/comment_holder";
 import reviewService from "../services/review.service";
 import BookCardLarge from "../components/book_card_large";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import bookService from "../services/book.service";
 
 const ReviewLeftPan = (props)=>{
     const rating_avg = reviewService.getRatingAvg();
@@ -51,16 +52,30 @@ const ReviewRightPan = (props)=>{
 }
 
 export default function ReviewPage(props){
+    const [Book, setBook] = useState(undefined);
     const params = useParams();
-    const bookId = params.isbn;
 
-//     const initialValue =
-//   '<p>Your initial <b>html value</b> or an empty string to init editor without value</p>';
-//     const [review, setReview] = useState(initialValue);
+    useEffect(() => {
+        const bookId = params.isbn;
+        const fetchData = async ()=>{
+            let data = await bookService.getBookByIsbn(bookId);
+            console.log(data);
+            setBook(data);
+        }
+        fetchData();
+        
+    }, [params.isbn])
+    
 
     return (
         <Stack sx={{width: '80%'}} spacing={5}>
-            <BookCardLarge bookId={bookId}/>
+            {
+                Book ? (
+                    <BookCardLarge book = {Book}/>
+                ):(
+                    <Skeleton sx={{m : 2}} variant="rectangular" height={200}/>
+                )
+            }
             <Paper elevation={3} style={{margin: '20', padding: '50'}}>
                 <Typography alignSelf='flex-start' variant='h5'>Ratings and Reviews</Typography>
                 <Stack direction="row" spacing={2}>

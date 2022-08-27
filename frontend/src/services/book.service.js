@@ -1,7 +1,7 @@
 import axios from "axios";
 import AuthService from "./auth.service";
 
-const API_URL = "https://damp-tundra-37123.herokuapp.com/api/book/";
+const API_URL = "https://damp-tundra-37123.herokuapp.com/api/book";
 
 const booklist = [
     {
@@ -108,23 +108,33 @@ const getBookIds = async ()=>{
     const config = {
         headers: { Authorization: `Bearer ${token}` }
     };
-    console.log(config);
 
     let data = await axios.get(
-        API_URL + 'get/random/5', config
+        API_URL + '/get/random/5', config
     ).catch(err => console.log(err.response));
-    console.log(data.data);
     
     return data.data;
 }
 
-const getBookById = (id)=>{
-    return booklist.filter((book)=> book.bookId === +id)[0];
+const getBookByIsbn = async (isbn)=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    let data = await axios.get(
+        API_URL + '/' + isbn,
+        config
+    ).catch(err => console.log(err.response));
+
+    return data.data;
 }
 
 const bookService = {
     getBookIds,
-    getBookById
+    getBookByIsbn
 }
 
 export default bookService;
