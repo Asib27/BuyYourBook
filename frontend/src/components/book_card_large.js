@@ -12,9 +12,11 @@ import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined
 import ShareIcon from '@mui/icons-material/Share';
 import { AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import TextField from '@mui/material/TextField';
 
 import { useCart } from 'react-use-cart';
+import { Field, Form, Formik} from 'formik';
+import * as Yup from 'yup';
+import { TextField } from 'formik-mui';
 
 // import PropTypes from 'prop-types';
 // import ColorLensIcon from '@mui/icons-material/ColorLens';
@@ -50,6 +52,68 @@ const useSnackbarHelper = ()=>{
     }
 }
 
+const useModalHelper = ()=>{
+    const [openedModal, setOpenedModal] = React.useState(false);
+    const handleModalClose = ()=>{
+        setOpenedModal(false);
+    }
+
+    const CommentModal = ({onSubmit, book})=>{
+        const author = book.writersOfTheBook.map(w=>w.name).join(' , ');
+        return (
+            <Dialog 
+                open={openedModal} 
+                onClose={handleModalClose}
+                maxWidth='sm'
+                fullWidth
+            >
+                <DialogTitle>Review</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {
+                            "Write review about \"" + book.name + "\" by \""
+                            + author + "\" . You review will be posted publicly. "
+                        }
+                    </DialogContentText>
+                    <Formik
+                        initialValues={{review : ''}}
+                        validationSchema={
+                            Yup.object({
+                                review: Yup.string().required('Please enter your review')
+                            })
+                        }
+                        onSubmit={(values, {resetForm})=>{
+                            setOpenedModal(false);
+                            resetForm();
+                            onSubmit(values);
+                        }}
+                    >
+                        <Form>
+                            <Field
+                                component={TextField}
+                                id="review"
+                                name="review"
+                                placeholder="Type here"
+                                fullWidth
+                                variant="standard"
+                                multiline    
+                            />
+
+                            <DialogActions>
+                                <Button onClick={handleModalClose}>Cancel</Button>
+                                <Button type='submit'>Submit</Button>
+                            </DialogActions>
+                        </Form>
+                    </Formik>
+                </DialogContent>
+            </Dialog>
+        )
+    }
+
+    return {
+        openedModal, setOpenedModal, CommentModal
+    }
+}
 
 // class ColorPic extends React.Component {
 //   static propTypes = {
@@ -102,13 +166,8 @@ export default function BookCardLarge(props) {
 //   const theme = useTheme();
     const {addItem} = useCart();
     
-    const [openedModal, setOpenedModal] = React.useState(false);
+    const {openedModal, setOpenedModal, CommentModal} = useModalHelper();
     const { openSnackbar, setOpenSnackbar, SnackbarHelper} = useSnackbarHelper();
-    const [reviewText, setReviewText] = React.useState('');
-    
-    const handleModalClose = ()=>{
-        setOpenedModal(false);
-    }
 
     const onClickingBuy = ()=>{
         const item  = {
@@ -134,53 +193,14 @@ export default function BookCardLarge(props) {
         setOpenedModal(true);
     }
 
-    const onReviewSubmit = ()=>{
-        console.log(reviewText);
-        setReviewText('');
-        setOpenedModal(false);
-    }
-
-    const CommentModal = ()=>{
-        return (
-            <Dialog 
-                open={openedModal} 
-                onClose={handleModalClose}
-                maxWidth='sm'
-                fullWidth
-            >
-                <DialogTitle>Review</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        {
-                            "Write review about \"" + BookName + "\" by \""
-                            + BookAuthor + "\" . You review will be posted publicly. "
-                        }
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        placeholder="Type here"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                        multiline
-                        value={reviewText}
-                        onChange={(event) => setReviewText(event.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleModalClose}>Cancel</Button>
-                    <Button onClick={onReviewSubmit}>Submit</Button>
-                </DialogActions>
-            </Dialog>
-        )
+    const onReviewSubmit = (values)=>{
+        console.log(values);
     }
 
     const Book = props.book;
 
     const BookName = Book.name;
-    const BookAuthor = Book.author;
+    const BookAuthor = Book.writersOfTheBook.map(w=>w.name).join(' , ');;
     const description = Book.description;
 
   return (
@@ -220,7 +240,7 @@ export default function BookCardLarge(props) {
         </Box>
         <SnackbarHelper/>
 
-        <CommentModal/>        
+        <CommentModal onSubmit={onReviewSubmit} book={Book}/>
     </Card>
   );
 }
