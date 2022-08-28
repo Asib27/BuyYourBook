@@ -46,11 +46,20 @@ let comments = [
         "together with your sts. Add 1 cup of fro peas along with the mussels," +
         "if you like.",
 
-    }
+    },
+    // {
+    //     "id": 1,
+    //     "upVotes": 7,
+    //     "downVotes": 5,
+    //     "review_text": "The book is excellent",
+    //     "rating": 4,
+    //     "addDate": "2022-08-10T13:38:47.000+00:00",
+    //     "user_name": 3
+    // }
 ];
 
-const getComment = (comment_id)=>{
-    return comments[comment_id];
+const getComment = (isbn)=>{
+    return comments;
 }
 
 const getNoOfComment = ()=>{

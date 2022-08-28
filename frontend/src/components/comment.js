@@ -71,20 +71,14 @@ const CardheadSubheader = (props) =>{
   );
 }
 
-export default function CommentCard(props) {
-  if(props.comment_id === undefined) {
-    console.log('comment id is not passed in props');
-  }
-
-  const commentInfo = commentService.getComment(props.comment_id);
-  
-  const rating = commentInfo.rating; // API
-  const commentDate = commentInfo.date; // API
-  const commentAuthor = commentInfo.author;
+export default function CommentCard({comment}) {
+  const rating = comment.rating; // API
+  const commentDate = comment.date; // API
+  const commentAuthor = comment.author;
   const [expanded, setExpanded] = React.useState(false);
-  const [totalVote, setTotalVote] = React.useState(commentInfo.total_vote); // API
+  const [totalVote, setTotalVote] = React.useState(comment.total_vote); // API
   //saves 1 for upvote, 0 for no vote, -1 for downvote
-  const [voteStatus, setVoteStatus] = React.useState(commentInfo.givenVote); // API
+  const [voteStatus, setVoteStatus] = React.useState(comment.givenVote); // API
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -147,7 +141,7 @@ export default function CommentCard(props) {
         />
         <CardContent>
             <Typography variant="body2" color="text.secondary">
-              {commentInfo.comment_text}
+              {comment.comment_text}
             </Typography>
         </CardContent>
         <CardActions disableSpacing>

@@ -4,10 +4,6 @@ import AuthService from "./auth.service";
 
 const API_URL = kConst.base_url;
 
-const rating_avg = 4.1;
-const no_of_review = 100;
-const percents = [6, 5, 10, 30, 50];
-
 const axiosGetUtil = async(url)=>{
     const token = AuthService.getToken().jwtToken;
     const config = {

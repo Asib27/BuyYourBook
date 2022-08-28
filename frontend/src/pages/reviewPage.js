@@ -5,6 +5,7 @@ import BookCardLarge from "../components/book_card_large";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import bookService from "../services/book.service";
+import commentService from "../services/comment.service";
 
 const ReviewLeftPan = ({ratingAvg, noReview})=>{
     reviewService.getRatingAvg();
@@ -24,8 +25,6 @@ const ReviewLeftPan = ({ratingAvg, noReview})=>{
 const RatingViewer = (props)=>{
     const rating = props.rating_percent;
     const rating_text = props.rating_text;
-
-    console.log(rating, rating_text);
 
     return (
         <Stack direction='row' alignItems='center' spacing={2}>
@@ -64,6 +63,7 @@ export default function ReviewPage(props){
     const [ratingAvg, setRatingAvg] = useState(undefined);
     const [noReview, setNoReview] = useState(undefined);
     const [percentReview, setPercentReview] = useState(undefined);
+    const [comments, setComment] = useState(undefined);
     const params = useParams();
 
     useEffect(() => {
@@ -105,7 +105,18 @@ export default function ReviewPage(props){
         fetchData();
         
     }, [params.isbn]);
-
+    
+    useEffect(() => {
+        const isbn = params.isbn;
+        const fetchData = async ()=>{
+            let data = await commentService.getComment(isbn);
+            console.log(data);
+            setComment(data);
+        }
+        fetchData();
+        
+    }, [params.isbn]);
+    
     return (
         <Stack sx={{width: '80%'}} spacing={5}>
             {
@@ -143,7 +154,14 @@ export default function ReviewPage(props){
                 </Stack>
             </Paper>
             
-            <CommentCardHolder/>
+            {
+                comments?(
+                    <CommentCardHolder comments={comments}/>
+                ):(
+                    <Skeleton sx={{m : 2}} variant="rectangular" height={400}/>
+                )
+            }
+            
 
         </Stack>
     );

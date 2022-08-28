@@ -1,19 +1,20 @@
 import { Stack } from "@mui/material";
-import commentService from "../services/comment.service";
 import CommentCard from "./comment";
 
+import PropTypes from 'prop-types';
 
-export default function CommentCardHolder(props){
-    const no_of_comments = commentService.getNoOfComment();
-
-    var commentCards = [];
-    for(let i = 0; i < no_of_comments; i++){
-        commentCards.push(<CommentCard comment_id={i} key={i}/>);
-    }
+export default function CommentCardHolder({comments}){
+    var commentCards = comments.map((comment, idx)=>{
+        return <CommentCard comment={comment} key={idx}/>
+    });
 
     return (
         <Stack spacing={2}>
             {commentCards}
         </Stack>
     );
+}
+
+CommentCardHolder.propTypes = {
+    comments: PropTypes.array.isRequired
 }
