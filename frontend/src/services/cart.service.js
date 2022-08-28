@@ -96,6 +96,7 @@ const useVerifyCouponCode = async(code)=>{
 }
 
 const CartService = {
+    getCart,
     addToCart,
     removeFromCart,
     updateQuantity,

@@ -10,6 +10,7 @@ import MuiAlert from '@mui/material/Alert';
 
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import StripeCheckout from "react-stripe-checkout";
+import CartService from "../services/cart.service";
 
 let addressResponse = "";
 
@@ -244,15 +245,30 @@ const BuyCard = (props)=>{
 const KEY = "pk_test_51LVfwtSCK00cFVdUgCeGovR4HGLHmQ9HtDVTgTQUZhYwJEmsZFNOubShcJsl3JZO6frCTUph4W1LsVqKsmk7YT2r00dnsdtm9S";
 
 export default function BuyPage(props){
-    const { setItems, items, updateCartMetadata, emptyCart, isEmpty } = useCart();
+    const [updateNeeded, setUpdateNeeder] = useState(true);
+    const [cartItem, setCartItem] = useState(undefined);
+
+    const { items, updateCartMetadata, emptyCart, isEmpty } = useCart();
     const removeAllClicked = ()=>{
         emptyCart();
+        CartService.emptyCart();
+        setUpdateNeeder(false);
     }
 
     useEffect(() => {
         updateCartMetadata({discount: 0});
     }, [])
     
+    useEffect(() => {
+      const fetchData = async()=>{
+        const data = await CartService.getCart();
+        console.log(data);
+        setCartItem(data);
+      }
+      fetchData();
+    }, [updateNeeded])
+    
+
     const onToken = (val)=>{
         console.log(val);
     }

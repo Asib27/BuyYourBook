@@ -12,7 +12,6 @@ import ShareIcon from '@mui/icons-material/Share';
 import { AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
-import { useCart } from 'react-use-cart';
 import { Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import { TextField } from 'formik-mui';
@@ -76,7 +75,7 @@ const useFailedSnackbarHelper = ()=>{
     return {
         openFailSnackbar,
         setFailOpenSnackbar,
-        SnackbarHelper
+        FailedSnackbarHelper
     }
 }
 
@@ -194,7 +193,7 @@ export default function BookCardLarge(props) {
 //   const theme = useTheme();
     const { setOpenedModal, CommentModal} = useModalHelper();
     const { setOpenSnackbar, SnackbarHelper} = useSnackbarHelper();
-    const { setFailOpenSnackbar, FailedSnackbarHelper} = useSnackbarHelper();
+    const { setFailOpenSnackbar, FailedSnackbarHelper} = useFailedSnackbarHelper();
 
     const Book = props.book;
     const BookName = Book.name.trim();
@@ -202,16 +201,6 @@ export default function BookCardLarge(props) {
     const description = Book.description;
 
     const onClickingBuy = async()=>{
-        // const item  = {
-        //     id: Book.isbn, 
-        //     book: Book,
-        //     quantity: 1, 
-        //     price: Book.price,
-        // }
-
-        // item.id = Book.isbn;
-        // addItem(item, 1);
-        console.log(Book.isbn);
         let res = await CartService.addToCart(Book.isbn, 1)
 
         if(res !== undefined)
