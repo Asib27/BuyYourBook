@@ -30,10 +30,10 @@ export default function HomePage(props) {
                             })
                         }
                     </Carousel>
-                    <CommentCard key={1} comment_id={1}/>
+                    {/* <CommentCard key={1} comment_id={1}/>
                     <CommentCard key={2} comment_id={2}/>
                     <CommentCard key={3} comment_id={3}/>
-                    <CommentCard key={4} comment_id={0}/>
+                    <CommentCard key={4} comment_id={0}/> */}
                 </Box>
             ) : (
                 <Skeleton sx={{m : 2}} variant="rectangular" animation="wave" height={100}/>

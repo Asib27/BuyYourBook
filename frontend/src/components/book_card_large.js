@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import { TextField } from 'formik-mui';
 
 import kConst from "../const";
+import CartService from '../services/cart.service';
 
 // import PropTypes from 'prop-types';
 // import ColorLensIcon from '@mui/icons-material/ColorLens';
@@ -49,6 +50,32 @@ const useSnackbarHelper = ()=>{
     return {
         openSnackbar,
         setOpenSnackbar,
+        SnackbarHelper
+    }
+}
+
+const useFailedSnackbarHelper = ()=>{
+    const [openFailSnackbar, setFailOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason)=>{
+        if (reason === 'clickaway') {
+            return;
+          }
+      
+        setFailOpenSnackbar(false);
+    }
+
+    const FailedSnackbarHelper = ()=>(
+        <Snackbar open={openFailSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+            <Alert onClose={handleSnackbarClose} severity="failed" sx={{ width: '100%' }}>
+            <AlertTitle>Failed</AlertTitle>
+                Item could not be added to the cart. Please try again.
+            </Alert>
+        </Snackbar>
+    )
+
+    return {
+        openFailSnackbar,
+        setFailOpenSnackbar,
         SnackbarHelper
     }
 }
@@ -165,21 +192,33 @@ const useModalHelper = ()=>{
 
 export default function BookCardLarge(props) {
 //   const theme = useTheme();
-    const {addItem} = useCart();
     const { setOpenedModal, CommentModal} = useModalHelper();
     const { setOpenSnackbar, SnackbarHelper} = useSnackbarHelper();
+    const { setFailOpenSnackbar, FailedSnackbarHelper} = useSnackbarHelper();
 
-    const onClickingBuy = ()=>{
-        const item  = {
-            id: Book.isbn, 
-            book: Book,
-            quantity: 1, 
-            price: Book.price,
+    const Book = props.book;
+    const BookName = Book.name.trim();
+    const BookAuthor = Book.writersOfTheBook.map(w=>w.name).join(' , ').trim();;
+    const description = Book.description;
+
+    const onClickingBuy = async()=>{
+        // const item  = {
+        //     id: Book.isbn, 
+        //     book: Book,
+        //     quantity: 1, 
+        //     price: Book.price,
+        // }
+
+        // item.id = Book.isbn;
+        // addItem(item, 1);
+        console.log(Book.isbn);
+        let res = await CartService.addToCart(Book.isbn, 1)
+
+        if(res !== undefined)
+            setOpenSnackbar(true);
+        else{
+            setFailOpenSnackbar(true);
         }
-
-        item.id = Book.isbn;
-        addItem(item, 1);
-        setOpenSnackbar(true);
     }
 
     const onClickReview = ()=>{
@@ -189,11 +228,6 @@ export default function BookCardLarge(props) {
     const onReviewSubmit = (values)=>{
         console.log(values);
     }
-
-    const Book = props.book;
-    const BookName = Book.name.trim();
-    const BookAuthor = Book.writersOfTheBook.map(w=>w.name).join(' , ').trim();;
-    const description = Book.description;
 
   return (
     <Card sx={{ display: 'flex'}}>
@@ -234,6 +268,7 @@ export default function BookCardLarge(props) {
             </Box>
         </Box>
         <SnackbarHelper/>
+        <FailedSnackbarHelper/>
 
         <CommentModal onSubmit={onReviewSubmit} book={Book}/>
     </Card>

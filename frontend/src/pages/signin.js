@@ -63,7 +63,6 @@ export default function SignIn() {
             })}
             onSubmit={async (values, { resetForm }) => {
               const res = await AuthService.login(values.uname, values.pass);
-              console.log(res);
 
               if(res === undefined){
                 resetForm();
