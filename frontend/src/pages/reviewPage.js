@@ -127,7 +127,7 @@ export default function ReviewPage(props){
                 )
             }
             <Paper elevation={3} style={{margin: '20', padding: '50'}}>
-                <Typography  variant='h5' sx={{pt: 3, pl: 5}}>Ratings and Reviews</Typography>
+                <Typography  variant='h5' sx={{pt: 3, pl: 5}}>Ratings Summary</Typography>
                 <Stack direction="row" spacing={2}>
                     <Box sx={{ width: '20%' }}>
                         {
@@ -154,6 +154,7 @@ export default function ReviewPage(props){
                 </Stack>
             </Paper>
             
+            <Typography  variant='h5' sx={{pt: 3, pl: 5}}>Reviews</Typography>
             {
                 comments?(
                     <CommentCardHolder comments={comments}/>

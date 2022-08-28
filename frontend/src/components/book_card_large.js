@@ -9,7 +9,7 @@ import * as React from 'react';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
 import ShareIcon from '@mui/icons-material/Share';
-import { AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from '@mui/material';
+import { AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
 import { useCart } from 'react-use-cart';
@@ -197,12 +197,15 @@ export default function BookCardLarge(props) {
 
   return (
     <Card sx={{ display: 'flex'}}>
-        <CardMedia
-            component="img"
-            sx={{ width: 151 , p: 3}}
-            image={Book.image? Book.image: kConst.placeholder_image}
-            alt={BookName + " image"}
-        />
+        <Box>
+            <CardMedia
+                component="img"
+                sx={{ width: 151 , p: 3}}
+                image={Book.image? Book.image: kConst.placeholder_image}
+                alt={BookName + " image"}
+            />
+            <Rating name="user-rating" defaultValue={4} precision={0.5}/>
+        </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: '1 0 auto' }}>
                 <Typography component="div" variant="h5" align='left'>

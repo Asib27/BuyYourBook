@@ -1,3 +1,7 @@
+import axios from "axios";
+import kConst from "../const";
+import AuthService from "./auth.service";
+
 let comments = [
     {
         comment_id: 1,
@@ -58,8 +62,37 @@ let comments = [
     // }
 ];
 
-const getComment = (isbn)=>{
-    return comments;
+const API_URL = kConst.base_url;
+
+const axiosGetUtil = async(url)=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let data = await axios.get(
+        url, config
+    ).catch(err => console.log(err.response));
+
+    return data;
+}
+
+const getComment = async(isbn)=>{
+    // const token = AuthService.getToken().jwtToken;
+    // const config = {
+    //     headers: { Authorization: `Bearer ${token}` }
+    // };
+
+    // let data = await axios.get(API_URL + '/api/book/' + isbn + '/review/all', config)
+    //      .then(res => res.data)
+    //      .then(res => {
+    //         res.user = await axios.get(API_URL + '/api/user/' + res.user_id, config);
+    //         return res;
+    //      });
+    let data = await axiosGetUtil(API_URL + '/api/book/' + isbn + '/review/all');
+    console.log(data.data);
+    
+    return data.data;
 }
 
 const getNoOfComment = ()=>{

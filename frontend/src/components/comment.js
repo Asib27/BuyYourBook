@@ -72,13 +72,21 @@ const CardheadSubheader = (props) =>{
 }
 
 export default function CommentCard({comment}) {
+  function dateFormat(d){
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    var t = new Date(d);
+    return t.getDate()+ ' ' +monthNames[t.getMonth()]+', '+t.getFullYear();
+  }
+
   const rating = comment.rating; // API
-  const commentDate = comment.date; // API
-  const commentAuthor = comment.author;
+  const commentDate = dateFormat(comment.addDate); // API
+  const commentAuthor = comment.user.username; //TODO: user
   const [expanded, setExpanded] = React.useState(false);
-  const [totalVote, setTotalVote] = React.useState(comment.total_vote); // API
+  const [totalVote, setTotalVote] = React.useState(comment.upVotes - comment.downVotes); // API
   //saves 1 for upvote, 0 for no vote, -1 for downvote
-  const [voteStatus, setVoteStatus] = React.useState(comment.givenVote); // API
+  const [voteStatus, setVoteStatus] = React.useState(0); // API
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -124,9 +132,9 @@ export default function CommentCard({comment}) {
         <Card sx={{ Width: '80%' }}>
         <CardHeader
             avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="author">
-                {commentAuthor.charAt(0)}
-            </Avatar>
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="author"
+              src={comment.userlink}
+            />
             }
             action={
             <IconButton aria-label="settings">
@@ -140,8 +148,8 @@ export default function CommentCard({comment}) {
               />}
         />
         <CardContent>
-            <Typography variant="body2" color="text.secondary">
-              {comment.comment_text}
+            <Typography variant="body1" color="text.secondary">
+              {comment.review_text}
             </Typography>
         </CardContent>
         <CardActions disableSpacing>
