@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 import {
   Avatar,
   Box,
@@ -15,7 +14,20 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
-import { getInitials } from '../../utils/get-initials';
+
+// to csv
+/**
+ const rows = [
+    ["name1", "city1", "some other info"],
+    ["name2", "city2", "more info"]
+];
+
+let csvContent = "data:text/csv;charset=utf-8," 
+    + rows.map(e => e.join(",")).join("\n");
+
+    var encodedUri = encodeURI(csvContent);
+window.open(encodedUri);
+ */
 
 export const CustomerListResults = ({ customers, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
@@ -119,16 +131,15 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                       }}
                     >
                       <Avatar
-                        src={customer.avatarUrl}
+                        src={customer.link}
                         sx={{ mr: 2 }}
-                      >
-                        {getInitials(customer.name)}
-                      </Avatar>
+                      />
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        { (!customer.first_name && customer.middle_name && customer.last_name) ? 'N/A' 
+                            : (customer.first_name??'') + ' ' + (customer.middle_name??'') + ' '+ (customer.last_name??'')}
                       </Typography>
                     </Box>
                   </TableCell>
@@ -136,14 +147,14 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                     {customer.email}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {`${customer.location.street}, ${customer.location.district}, ${customer.location.country}`}
                   </TableCell>
                   <TableCell>
                     {customer.phone}
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {format(customer.createdAt, 'dd/MM/yyyy')}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

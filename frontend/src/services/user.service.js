@@ -102,6 +102,11 @@ const getLocation = async()=>{
     return data.data;
 }
 
+const getAllUsers = async()=>{
+    let data = await axiosGetUtil(API_KEY + '/all');
+    return data.data;
+}
+
 const UserService = {
     getUserData,
     getUsername,
@@ -113,7 +118,8 @@ const UserService = {
     getPersonalInfo,
     getAboutInfo,
     updateLocation,
-    getLocation
+    getLocation,
+    getAllUsers
 }
 
 export default UserService;

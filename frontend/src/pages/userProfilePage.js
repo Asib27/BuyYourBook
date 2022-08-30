@@ -90,7 +90,7 @@ export default function UserProfilePage(){
                 Complains and Support
               </TabPanel>
               <TabPanel value={tabValue} index={4}>
-                <Dashboard/>
+                <Customers/>
               </TabPanel>
               <TabPanel value={tabValue} index={5}>
                 <Products/>
