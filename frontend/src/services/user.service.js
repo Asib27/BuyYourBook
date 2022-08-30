@@ -1,3 +1,9 @@
+import axios from "axios";
+import kConst from "../const";
+import AuthService from "./auth.service";
+import ImageService from "./image.service";
+
+const API_KEY = kConst.base_url + '/api/user';
 
 const getUserData = ()=>{
     const user =  JSON.parse(localStorage.getItem("user"));
@@ -14,9 +20,11 @@ const getUsername = ()=>{
 
 const getUserAvatar = ()=>{
     const user = JSON.parse(localStorage.getItem("user"));
+
+    if(!user) return undefined;
     return {
         username: user.username.toLowerCase().charAt(0).toUpperCase()+(user.username.slice(1).toLowerCase()),
-        image: user.image,
+        image: user.link,
     }
 }
 
@@ -25,11 +33,76 @@ const getUserDescriber = ()=>{
     return "Newbie";
 }
 
+const axiosPostUtil = async(url, payload)=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    // let body = new FormData(payload);
+    // console.log(body);
+
+    let data = await axios.post(
+        url, payload, config
+    ).catch(err => console.log(err.response));
+
+    return data;
+}
+
+const axiosGetUtil = async(url)=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let data = await axios.get(
+        url, config
+    ).catch(err => console.log(err.response));
+
+    return data;
+}
+
+const updatePersonalInfo = async(values)=>{
+    let data = await axiosPostUtil(API_KEY + '/add/personal', values);
+    return data.status === 200;
+}
+
+const getPersonalInfo = async(values)=>{
+    let data = await axiosGetUtil(API_KEY + '/get/personal');;
+    return data.data;
+}
+
+const updateAboutInfo = async(values)=>{
+    let data = await axiosPostUtil(API_KEY + '/add/about', values);
+    return data.status === 200;
+}
+
+const getAboutInfo = async(values)=>{
+    let data = await axiosGetUtil(API_KEY + '/get/about');;
+    return data.data;
+}
+
+const updateImage = async(img)=>{
+    let username = getUsername();
+    let data = await axiosPostUtil(API_KEY + '/edit?username=' + username +"&imageLink=" + img, {});
+    console.log(data);
+
+    let user = JSON.parse(localStorage.getItem("user"));
+    user.link = img;
+    localStorage.setItem("user", JSON.stringify(user));
+    return data.status === 200;
+}
+
 const UserService = {
     getUserData,
     getUsername,
     getUserAvatar,
-    getUserDescriber
+    getUserDescriber,
+    updatePersonalInfo,
+    updateAboutInfo,
+    updateImage,
+    getPersonalInfo,
+    getAboutInfo
 }
 
 export default UserService;

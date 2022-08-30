@@ -148,7 +148,10 @@ const BuyCard = (props)=>{
         setOpenSnackbar(false);
     }
 
-    const {cartTotal, metadata, updateCartMetadata} = useCart();
+    const {cartTotal , updateCartMetadata} = useCart();
+    let metadata = {
+        discount: 0
+    };
     if(metadata.discount === undefined){
         updateCartMetadata({discount: 0});
     }

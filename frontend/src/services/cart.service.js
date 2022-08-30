@@ -49,8 +49,20 @@ const addToCart = async (bookId, quantity)=>{
 }
 
 const getCart = async()=>{
-    let data = await axiosPostUtil(API_URL + '/get', {
+    let data = await axiosGetUtil(API_URL + '/get/data');
+    data = data.data;
+    let res = data.map(book=>{
+        return {
+            'isbn': book[0],
+            'edition': book[1],
+            'genre': book[2],
+            'language': book[3],
+            'name': book[4],
+            'price': book[5],
+            'quantity': book[6]
+        };
     });
+    console.log(data);
     return data;
 }
 

@@ -9,8 +9,7 @@ import * as React from 'react';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
 import ShareIcon from '@mui/icons-material/Share';
-import { AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating, Snackbar } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating } from '@mui/material';
 
 import { Field, Form, Formik} from 'formik';
 import * as Yup from 'yup';
@@ -18,66 +17,13 @@ import { TextField } from 'formik-mui';
 
 import kConst from "../const";
 import CartService from '../services/cart.service';
+import useSuccessSnackbarHelper from './successSnackbar';
+import useFailedSnackbarHelper from './failSnackbar';
 
 // import PropTypes from 'prop-types';
 // import ColorLensIcon from '@mui/icons-material/ColorLens';
 // import { TwitterPicker } from 'react-color';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-const useSnackbarHelper = ()=>{
-    const [openSnackbar, setOpenSnackbar] = React.useState(false);
-    const handleSnackbarClose = (event, reason)=>{
-        if (reason === 'clickaway') {
-            return;
-          }
-      
-        setOpenSnackbar(false);
-    }
-
-    const SnackbarHelper = ()=>(
-        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
-            <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-            <AlertTitle>Success</AlertTitle>
-                Item added to cart succesfully.
-            </Alert>
-        </Snackbar>
-    )
-
-    return {
-        openSnackbar,
-        setOpenSnackbar,
-        SnackbarHelper
-    }
-}
-
-const useFailedSnackbarHelper = ()=>{
-    const [openFailSnackbar, setFailOpenSnackbar] = React.useState(false);
-    const handleSnackbarClose = (event, reason)=>{
-        if (reason === 'clickaway') {
-            return;
-          }
-      
-        setFailOpenSnackbar(false);
-    }
-
-    const FailedSnackbarHelper = ()=>(
-        <Snackbar open={openFailSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
-            <Alert onClose={handleSnackbarClose} severity="failed" sx={{ width: '100%' }}>
-            <AlertTitle>Failed</AlertTitle>
-                Item could not be added to the cart. Please try again.
-            </Alert>
-        </Snackbar>
-    )
-
-    return {
-        openFailSnackbar,
-        setFailOpenSnackbar,
-        FailedSnackbarHelper
-    }
-}
 
 const useModalHelper = ()=>{
     const [openedModal, setOpenedModal] = React.useState(false);
@@ -192,8 +138,8 @@ const useModalHelper = ()=>{
 export default function BookCardLarge(props) {
 //   const theme = useTheme();
     const { setOpenedModal, CommentModal} = useModalHelper();
-    const { setOpenSnackbar, SnackbarHelper} = useSnackbarHelper();
-    const { setFailOpenSnackbar, FailedSnackbarHelper} = useFailedSnackbarHelper();
+    const { setOpenSnackbar, SnackbarHelper} = useSuccessSnackbarHelper("Item added to the cart succesfully");
+    const { setFailOpenSnackbar, FailedSnackbarHelper} = useFailedSnackbarHelper("Item could not be added to the cart. Please try again.");
 
     const Book = props.book;
     const BookName = Book.name.trim();

@@ -153,13 +153,22 @@ const NavigationBar = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={userAvatar.username} src={userAvatar.image}>
-                  {userAvatar.username.charAt(0)}
-                </Avatar>
-              </IconButton>
-            </Tooltip>
+            {
+              userAvatar? (
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt={userAvatar.username} src={userAvatar.image}>
+                      {userAvatar.username.charAt(0)}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+              ):(
+                <Box>
+                  Signin
+                </Box>
+              )
+            }
+            
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
