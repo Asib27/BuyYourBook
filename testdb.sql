@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.5 (Ubuntu 14.5-1.pgdg22.04+1)
--- Dumped by pg_dump version 14.5 (Ubuntu 14.5-1.pgdg22.04+1)
+-- Dumped from database version 14.4
+-- Dumped by pg_dump version 14.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,6 +17,21 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: my_type; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.my_type AS (
+	name character varying,
+	price integer,
+	link character varying,
+	author_name character varying,
+	quantity integer
+);
+
+
+ALTER TYPE public.my_type OWNER TO postgres;
+
+--
 -- Name: buy_items(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -24,18 +39,248 @@ CREATE FUNCTION public.buy_items() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 
+
+
     BEGIN
+
+
 
         INSERT INTO bought_items(user_id,book_id,quantity) VALUES(old.user_id, old.book_id, old.quantity);
 
+
+
         RETURN OLD;
 
+
+
     END;
+
+
 
 $$;
 
 
 ALTER FUNCTION public.buy_items() OWNER TO postgres;
+
+--
+-- Name: check_location(character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.check_location(cn character varying, street character varying, dis character varying) RETURNS bigint
+    LANGUAGE plpgsql
+    AS $$
+
+    declare
+
+        l_id bigint;
+
+    begin
+
+
+
+        select id into l_id
+
+        from locations l
+
+        where Lower(street) = lower(l.street_address)
+
+        and  lower(dis) = lower(l.district)
+
+        and lower(cn) = lower(l.country);
+
+
+
+        if l_id is null then
+
+            insert into locations(district, street_address, country) values (dis, street, cn);
+
+
+
+            select id into l_id
+
+            from locations l
+
+            where street = l.street_address
+
+            and   dis = l.district
+
+            and cn = l.country;
+
+        end if;
+
+        return l_id;
+
+    end;
+
+$$;
+
+
+ALTER FUNCTION public.check_location(cn character varying, street character varying, dis character varying) OWNER TO postgres;
+
+--
+-- Name: get_author(numeric); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_author(cart_id numeric) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+
+    declare
+
+        author_name varchar;
+
+    begin
+
+        select name into author_name
+
+        from authors
+
+        where id = (
+
+            select author_id
+
+            from author_of_books
+
+            where book_id = (select book_id from cart_item where cart_id = id)
+
+        );
+
+        RETURN author_name;
+
+    end;
+
+$$;
+
+
+ALTER FUNCTION public.get_author(cart_id numeric) OWNER TO postgres;
+
+--
+-- Name: get_object_fields(bigint); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_object_fields(cart_id bigint) RETURNS public.my_type
+    LANGUAGE plpgsql
+    AS $$
+
+
+
+DECLARE
+
+    result_record my_type;
+
+
+
+BEGIN
+
+    select b.name, b.price, b.link
+
+    into result_record.name, result_record.price
+
+    from books b join cart_item ci on b.isbn = ci.book_id
+
+    where ci.id = cart_id;
+
+
+
+    select quantity into result_record.quantity
+
+    from cart_item
+
+    where id = cart_id;
+
+    raise notice '%', result_record.quantity;
+
+
+
+    select name into result_record.author_name
+
+    from authors
+
+    where id = (
+
+        select author_id
+
+        from author_of_books
+
+        where book_id = (select book_id from cart_item where cart_id = id)
+
+    );
+
+
+
+    RETURN result_record;
+
+
+
+END
+
+
+
+$$;
+
+
+ALTER FUNCTION public.get_object_fields(cart_id bigint) OWNER TO postgres;
+
+--
+-- Name: insert_verification(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.insert_verification() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+
+DECLARE
+
+    dis varchar;
+
+    cntry varchar;
+
+    address varchar;
+
+    l_id bigint;
+
+BEGIN
+
+
+
+    l_id := 0;
+
+
+
+    dis := NEW.district;
+
+    cntry := new.country;
+
+    address := new.street_address;
+
+
+
+    select id into l_id from locations
+
+    where lower(cntry) = lower(country)
+
+    and lower(dis) = lower(district)
+
+    and lower(address) = lower(street_address);
+
+
+
+    if l_id <> 0 then
+
+        Raise EXCEPTION '%',l_id;
+
+    end if;
+
+
+
+   RETURN NEW;
+
+END;
+
+$$;
+
+
+ALTER FUNCTION public.insert_verification() OWNER TO postgres;
 
 --
 -- Name: notification_buy_successful(bigint); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -45,9 +290,15 @@ CREATE PROCEDURE public.notification_buy_successful(IN user_id bigint)
     LANGUAGE plpgsql
     AS $$
 
+
+
 begin
 
+
+
    insert into notification(notify_whom, type) values (user_id, 'buy successful');
+
+
 
 end;$$;
 
@@ -62,9 +313,15 @@ CREATE PROCEDURE public.notification_downvote(IN user_id bigint)
     LANGUAGE plpgsql
     AS $$
 
+
+
 begin
 
+
+
    insert into notification(notify_whom, type) values (user_id, 'downvoted');
+
+
 
 end;$$;
 
@@ -81,11 +338,21 @@ CREATE PROCEDURE public.notification_upvote(IN user_id bigint)
 
 
 
+
+
+
+
 begin
+
+
 
     insert into notification(notify_whom, type) values (user_id, 'upvoted');
 
+
+
 end;
+
+
 
 $$;
 
@@ -99,29 +366,53 @@ ALTER PROCEDURE public.notification_upvote(IN user_id bigint) OWNER TO postgres;
 CREATE FUNCTION public.trigger_function() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
+
 BEGIN
+
    IF TG_OP = 'INSERT' THEN
+
         INSERT INTO user_cloned VALUES (NEW.id,
+
                                         NEW.email,
+
                                         NEW.username);
+
                                        
+
         RETURN NEW;
+
    END IF;
+
    
+
    IF TG_OP = 'DELETE' THEN
+
         DELETE 
+
         FROM user_cloned 
+
         WHERE userid = OLD.id;                          
+
         RETURN OLD;     
+
    END IF;
+
    IF TG_OP = 'UPDATE' THEN
+
         UPDATE  user_cloned 
+
         SET userid = NEW.id, username = NEW.username,
+
             email = NEW.email;                           
+
         RETURN NEW;    
+
    END IF;
+
     
+
 END;
+
 $$;
 
 
@@ -135,21 +426,41 @@ CREATE PROCEDURE public.update_transaction(IN user_id bigint, IN totalprice doub
     LANGUAGE plpgsql
     AS $$
 
+
+
 declare
+
+
 
     l_id  bigint;
 
+
+
 begin
+
+
 
     select location_id into l_id
 
+
+
     from user_cloned
+
+
 
     where userid = user_id;
 
 
 
+
+
+
+
     insert into transaction(location_id, user_id, total_price) values(l_id, user_id, totalPrice);
+
+
+
+
 
 
 
@@ -220,7 +531,9 @@ CREATE TABLE public.books (
     name character varying(100) NOT NULL,
     price integer NOT NULL,
     quantity_available integer NOT NULL,
-    publisher_id bigint
+    publisher_id bigint,
+    link character varying(255),
+    description character varying(255)
 );
 
 
@@ -442,8 +755,8 @@ ALTER TABLE public.hibernate_sequence OWNER TO postgres;
 CREATE TABLE public.locations (
     id bigint NOT NULL,
     district character varying(50) NOT NULL,
-    postal_code character varying(10) NOT NULL,
-    street_address character varying(200) NOT NULL
+    street_address character varying(200) NOT NULL,
+    country character varying(255)
 );
 
 
@@ -661,7 +974,8 @@ CREATE TABLE public.transaction (
     tx_id bigint NOT NULL,
     location_id bigint,
     payment_id bigint,
-    user_id bigint
+    user_id bigint,
+    total_price double precision
 );
 
 
@@ -696,7 +1010,16 @@ CREATE TABLE public.user_cloned (
     userid bigint NOT NULL,
     email character varying(255),
     username character varying(255),
-    location_id bigint
+    location_id bigint,
+    link character varying(255),
+    backup_phone_number character varying(11),
+    first_name character varying(255),
+    last_name character varying(255),
+    middle_name character varying(255),
+    phone_number character varying(11),
+    about_user character varying(255),
+    favourite_books character varying(255),
+    favourite_genre character varying(255)
 );
 
 
@@ -769,6 +1092,17 @@ ALTER TABLE public.users_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
+
+--
+-- Name: votes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.votes (
+    vote_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.votes OWNER TO postgres;
 
 --
 -- Name: authors id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -895,13 +1229,13 @@ COPY public.authors (id, email, name) FROM stdin;
 -- Data for Name: books; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.books (isbn, edition, genre, language, name, price, quantity_available, publisher_id) FROM stdin;
-3	5	Romantic	Bangla	Choker bali	150	25	\N
-4	5	Play	English	Hamlet 	150	25	\N
-5	5	Novel	Bangla	Lalsalu	150	25	\N
-6	5	Novel	English	Pride and Prejudice	150	25	\N
-7	5	Novel	English	Oedipus Rex	150	25	\N
-1	5	Novel	Bangla	Padma Nodir Mazhi	150	25	4
+COPY public.books (isbn, edition, genre, language, name, price, quantity_available, publisher_id, link, description) FROM stdin;
+3	5	Romantic	Bangla	Choker bali	150	25	\N	\N	\N
+4	5	Play	English	Hamlet 	150	25	\N	\N	\N
+5	5	Novel	Bangla	Lalsalu	150	25	\N	\N	\N
+6	5	Novel	English	Pride and Prejudice	150	25	\N	\N	\N
+7	5	Novel	English	Oedipus Rex	150	25	\N	\N	\N
+1	5	Novel	Bangla	Padma Nodir Mazhi	150	25	4	\N	This book is all about nothing...
 \.
 
 
@@ -955,6 +1289,9 @@ COPY public.cart_book (cart_id, book_id) FROM stdin;
 --
 
 COPY public.cart_item (id, quantity, book_id, user_id) FROM stdin;
+14	2	1	6
+15	2	3	6
+16	2	4	6
 \.
 
 
@@ -973,6 +1310,8 @@ COPY public.coupon (id, discount, name, status) FROM stdin;
 --
 
 COPY public.follows (user_id, follows_whom) FROM stdin;
+6	3
+6	1
 \.
 
 
@@ -980,17 +1319,19 @@ COPY public.follows (user_id, follows_whom) FROM stdin;
 -- Data for Name: locations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.locations (id, district, postal_code, street_address) FROM stdin;
-1	Dhaka	1253	0 Stephen Alley
-2	Chittagong	3764	3 Hoepker Park
-3	Comilla	1729	1930 Rusk Drive
-4	Dhaka	1253	47 Onsgard Lane
-5	Rajshahi	1201	45267 Algoma Park
-6	Dhaka	1253	0 Hanson Park
-7	Kolkata	42160	186 Pawling Trail
-8	Kolkata	42160	2692 Waubesa Lane
-9	Dhaka	1253	206 Forest Dale Drive
-10	Dhaka	1253	04 Valley Edge Crossing
+COPY public.locations (id, district, street_address, country) FROM stdin;
+1	Dhaka	0 Stephen Alley	Bangladesh
+2	Chittagong	3 Hoepker Park	Bangladesh
+3	Comilla	1930 Rusk Drive	Bangladesh
+4	Dhaka	47 Onsgard Lane	Bangladesh
+5	Rajshahi	45267 Algoma Park	Bangladesh
+6	Dhaka	0 Hanson Park	Bangladesh
+7	Kolkata	186 Pawling Trail	India
+8	Kolkata	2692 Waubesa Lane	India
+9	Dhaka	206 Forest Dale Drive	Bangladesh
+10	Dhaka	04 Valley Edge Crossing	Bangladesh
+12	ab	cd	bd
+16	Dhaka	0 Stephen Alley	India
 \.
 
 
@@ -1054,6 +1395,49 @@ COPY public.refreshtoken (id, expiry_date, token, user_id) FROM stdin;
 9	2022-08-10 13:04:22.229693	4126297a-051e-401e-8082-eb6a5583d494	3
 10	2022-08-11 11:27:13.547176	044da956-5f3e-4e71-add2-7cbba1ca544f	3
 11	2022-08-11 11:34:05.780349	d70ad558-2a5e-4045-8be6-35e6f942a5ab	3
+53	2022-08-28 18:27:45.200842	a5ab6167-2744-4eee-87b0-fa3071a28321	3
+54	2022-08-28 18:28:52.638521	c900b156-9c40-4e36-8f90-a93509716439	3
+55	2022-08-28 18:30:13.182795	3342d7a4-050c-4639-bb71-be859cd5284e	3
+56	2022-08-28 18:32:52.58877	3a89f1f2-96bf-42df-80e6-7d1d409b2c71	6
+57	2022-08-29 00:26:20.894155	715f6197-1b5a-4caa-ba81-9c8ddfb6d12c	6
+58	2022-08-29 00:40:03.528651	b3758bcc-d539-48e5-9e4d-69421a160cf6	6
+59	2022-08-29 00:44:57.827875	180f9f68-b06a-4e86-bd86-56bf9318d6c5	6
+60	2022-08-29 00:56:28.559892	2f9db286-d5e5-4264-9bff-40c99c919b37	6
+61	2022-08-29 00:56:49.106902	4aa7388b-bb73-4752-924f-9b5bc0916cd3	6
+62	2022-08-29 01:07:26.429966	4e34c4d8-6423-4ea1-9e29-558ad1b19c0a	6
+63	2022-08-29 01:21:59.845996	7661eb94-e307-4ca7-84ef-3029e8225b10	6
+64	2022-08-29 12:21:21.361914	8108d45f-edf5-4229-a0d3-c21e50713025	6
+65	2022-08-29 19:23:27.145245	db0a49a3-99a6-422e-a33b-07f07b698a59	6
+66	2022-08-29 19:26:39.900814	25187273-3214-4c86-95aa-a9c429e5b5f0	6
+67	2022-08-29 19:48:39.546197	7ab433f1-82d8-482e-8c10-1a390f8081d3	6
+68	2022-08-29 20:24:44.949411	eac0b6f2-aafd-4db4-b711-73bb5e4f15da	6
+69	2022-08-29 20:43:29.368292	3e8450a7-e07c-432e-9893-1af061619f1d	6
+70	2022-08-29 23:04:13.997813	36cf447c-31db-4a1f-b59f-559b0b80b1df	6
+71	2022-08-29 23:25:19.054564	46a370c5-0041-44bc-bf23-72e917ba45e2	6
+72	2022-08-31 19:45:10.381708	193b648a-c589-40d0-8fe9-61e74ff2676e	6
+73	2022-08-31 21:18:24.408807	7e54358f-d649-4cf4-9e69-9b3bdc1b3c2b	6
+74	2022-08-31 21:21:03.255673	16270911-755e-4986-852f-52f54084be0f	6
+75	2022-08-31 22:00:42.23492	879859af-3cef-4c28-8459-44f16abd2d1b	6
+76	2022-08-31 22:05:32.206849	3c2cb379-1d81-42bd-9677-38286a5efb85	6
+77	2022-08-31 22:13:13.000307	9b101f28-ca6b-4c61-8d3b-30a4a3a90ca9	6
+78	2022-08-31 22:16:39.792025	324db5ee-844e-46fe-bf12-ebfc20a0c8c1	6
+79	2022-08-31 22:22:52.721493	00e5813c-3c05-4173-88c0-e6c35a96dc41	6
+80	2022-08-31 22:25:23.802252	8c7075c1-83d6-4b29-95f9-46c9466990cb	6
+81	2022-08-31 22:31:01.529834	1f61afb4-059b-4878-b6ed-31a505af53dd	6
+82	2022-08-31 22:34:22.891903	cc5ab14a-e245-4d75-8039-6edf2e0974b2	6
+83	2022-08-31 22:35:57.939892	5a4a782d-4493-4de8-ae99-fbbca98c6c8f	6
+84	2022-08-31 22:42:16.692654	c30f93e7-57a4-4975-8f51-048539527366	6
+85	2022-08-31 23:23:34.617636	42d0e5e1-b855-4826-aa39-80c490f2160e	6
+86	2022-08-31 23:29:21.853891	cb713a00-e66c-4b47-9947-c3beb8d40739	6
+87	2022-08-31 23:31:09.523461	c98b92f2-62b3-4c79-9434-a5edce954d9d	6
+88	2022-08-31 23:34:28.533467	863d4e36-3e06-45ad-af10-7c0220bb8302	6
+89	2022-08-31 23:37:11.471169	0369417a-eef1-435b-94b8-fa68e44b5da7	6
+90	2022-08-31 23:48:46.723098	3d91adfe-adfe-4f54-b660-3808fce9ac95	6
+91	2022-08-31 23:49:43.441835	ff3529e8-4c83-4cb5-b018-492daaeed3a7	6
+92	2022-09-01 00:01:18.335973	19e5095d-2f2f-43a4-b35f-5c17487bada1	6
+93	2022-09-01 00:05:53.998505	bab405aa-bfc0-47e4-8452-8ed7490c8302	6
+94	2022-09-01 00:10:06.930205	3424c550-d6a3-49f0-bfe5-cc61b1e27b1b	1
+95	2022-09-01 00:50:25.934614	4ebc77ad-4e71-470d-a99b-8af45cd158e0	1
 \.
 
 
@@ -1062,6 +1446,10 @@ COPY public.refreshtoken (id, expiry_date, token, user_id) FROM stdin;
 --
 
 COPY public.reviews (review_id, downvotes, rating, review, upvotes, book_id, user_id, add_date) FROM stdin;
+5	0	4	The book is excellent	0	1	6	2022-08-28 01:08:42
+6	0	3	The book is excellent	0	1	6	2022-08-28 01:09:49
+7	0	5	The book is excellent	0	1	6	2022-08-28 01:09:54
+8	0	2	The book is bad	0	4	6	2022-08-28 01:10:08
 \.
 
 
@@ -1080,7 +1468,7 @@ COPY public.roles (id, name) FROM stdin;
 -- Data for Name: transaction; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.transaction (tx_id, location_id, payment_id, user_id) FROM stdin;
+COPY public.transaction (tx_id, location_id, payment_id, user_id, total_price) FROM stdin;
 \.
 
 
@@ -1088,8 +1476,12 @@ COPY public.transaction (tx_id, location_id, payment_id, user_id) FROM stdin;
 -- Data for Name: user_cloned; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.user_cloned (userid, email, username, location_id) FROM stdin;
-4	kamal@gmail.com	kamal	\N
+COPY public.user_cloned (userid, email, username, location_id, link, backup_phone_number, first_name, last_name, middle_name, phone_number, about_user, favourite_books, favourite_genre) FROM stdin;
+4	kamal@gmail.com	kamal	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N
+2	mod3@email.com	mod3	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N
+3	abc@email.com	Tanveer	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N
+6	abcd@email.com	mod	\N	\N	01234567891	abc	ghi	def	12345678910	\N	\N	\N
+1	mod2@email.com	mod2	16	\N	\N	\N	\N	\N	\N	\N	\N	\N
 \.
 
 
@@ -1106,6 +1498,8 @@ COPY public.user_roles (user_id, role_id) FROM stdin;
 3	2
 4	2
 4	1
+6	1
+6	2
 \.
 
 
@@ -1118,6 +1512,15 @@ COPY public.users (id, email, passwd, username) FROM stdin;
 2	mod3@email.com	$2a$10$NjK3g9v69QWL3hBapJIw2Ola5IOQa/72SP2lSNN3jbY2PhG6qeJaC	mod3
 3	abc@email.com	$2a$10$cLNS1JaME8E8fE7/V5ZPh.hegPWxfTnZ/kLUH1stmZwcCltGCeecm	Tanveer
 4	kamal@gmail.com	$2a$10$sDCxxAIwMGNN/CvrzXD71.a4MWVqi5F1n0x.zM0NvYvTv8Yv6j0zO	kamal
+6	abcd@email.com	$2a$10$ADfv6Bb0rjnb6e.0Wzfi.uoqafc4j3hvpc/760x5Tiux.hkyPLFUC	mod
+\.
+
+
+--
+-- Data for Name: votes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.votes (vote_id) FROM stdin;
 \.
 
 
@@ -1153,7 +1556,7 @@ SELECT pg_catalog.setval('public.cart_cart_id_seq', 1, false);
 -- Name: cart_item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cart_item_id_seq', 13, true);
+SELECT pg_catalog.setval('public.cart_item_id_seq', 16, true);
 
 
 --
@@ -1167,14 +1570,14 @@ SELECT pg_catalog.setval('public.coupon_id_seq', 4, true);
 -- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.hibernate_sequence', 52, true);
+SELECT pg_catalog.setval('public.hibernate_sequence', 95, true);
 
 
 --
 -- Name: locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.locations_id_seq', 11, true);
+SELECT pg_catalog.setval('public.locations_id_seq', 16, true);
 
 
 --
@@ -1202,7 +1605,7 @@ SELECT pg_catalog.setval('public.publisher_id_seq', 9, true);
 -- Name: reviews_review_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reviews_review_id_seq', 1, true);
+SELECT pg_catalog.setval('public.reviews_review_id_seq', 8, true);
 
 
 --
@@ -1230,7 +1633,7 @@ SELECT pg_catalog.setval('public.user_cloned_userid_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 4, true);
+SELECT pg_catalog.setval('public.users_id_seq', 6, true);
 
 
 --
@@ -1442,6 +1845,14 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: votes votes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.votes
+    ADD CONSTRAINT votes_pkey PRIMARY KEY (vote_id);
+
+
+--
 -- Name: cart_item update_buy_items; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1453,6 +1864,13 @@ CREATE TRIGGER update_buy_items BEFORE DELETE ON public.cart_item FOR EACH ROW E
 --
 
 CREATE TRIGGER update_user_cloned BEFORE INSERT OR DELETE OR UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION public.trigger_function();
+
+
+--
+-- Name: locations verify_insert; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER verify_insert BEFORE INSERT ON public.locations FOR EACH ROW EXECUTE FUNCTION public.insert_verification();
 
 
 --
@@ -1533,6 +1951,14 @@ ALTER TABLE ONLY public.transaction
 
 ALTER TABLE ONLY public.refreshtoken
     ADD CONSTRAINT fka652xrdji49m4isx38pp4p80p FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: cart_item fkb58e5ca5nwhh6hm3sboyggghe; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cart_item
+    ADD CONSTRAINT fkb58e5ca5nwhh6hm3sboyggghe FOREIGN KEY (book_id) REFERENCES public.books(isbn);
 
 
 --
@@ -1626,4 +2052,5 @@ ALTER TABLE ONLY public.reviews
 --
 -- PostgreSQL database dump complete
 --
+
 
