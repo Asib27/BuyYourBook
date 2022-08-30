@@ -1,4 +1,4 @@
-import { AlertTitle, Box, Button, Card, Divider, IconButton, Paper, Snackbar, Stack, Typography } from "@mui/material";
+import { AlertTitle, Box, Button, Card, Divider, IconButton, Paper, Skeleton, Snackbar, Stack, Typography } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import {  TextField } from "formik-mui";
 import { forwardRef, useEffect, useState } from "react";
@@ -249,32 +249,38 @@ const KEY = "pk_test_51LVfwtSCK00cFVdUgCeGovR4HGLHmQ9HtDVTgTQUZhYwJEmsZFNOubShcJ
 
 export default function BuyPage(props){
     const [updateNeeded, setUpdateNeeder] = useState(true);
-    const [cartItem, setCartItem] = useState(undefined);
+    const [cart, setCart] = useState(undefined);
 
-    const { items, updateCartMetadata, emptyCart, isEmpty } = useCart();
     const removeAllClicked = ()=>{
-        emptyCart();
         CartService.emptyCart();
         setUpdateNeeder(false);
     }
-
-    useEffect(() => {
-        updateCartMetadata({discount: 0});
-    }, [])
     
     useEffect(() => {
       const fetchData = async()=>{
         const data = await CartService.getCart();
-        console.log(data);
-        setCartItem(data);
+        setCart(data);
       }
       fetchData();
     }, [updateNeeded])
     
-
-    const onToken = (val)=>{
-        console.log(val);
-    }
+    const CartView = ({cart})=>(
+        <>
+        {
+            (cart && cart.length)? (
+                <>
+                {
+                    cart.map((book, idx)=>{
+                        return (<BookCardSmall key={idx} item={book}/>);
+                    })
+                }
+                </>
+            ) : (
+                (<Typography variant='h5' sx={{border: '2px solid', p: 2, mt: 1}}>Your cart is empty</Typography>)
+            )
+        }
+        </>
+    )
 
     return (
         <Box sx={{ m: 2}}>
@@ -286,14 +292,12 @@ export default function BuyPage(props){
                     Remove All
                 </IconButton>
             </Box>
+            
             {
-                isEmpty? <Typography variant='h5' sx={{border: '2px solid', p: 2, mt: 1}}>Your cart is empty</Typography> : ""
+                cart? (<CartView cart={cart}/>) : 
+                (<Skeleton sx={{m : 2}} variant="rectangular" height={400}/>)
             }
-            {
-                items.map((item)=>{
-                    return (<BookCardSmall key={item.id} itemId={item.id}/>);
-                })
-            }
+
             <Box sx={{display: 'flex'}}>
                 <AddressCard/>
                 <Box>

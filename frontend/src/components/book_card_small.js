@@ -1,20 +1,29 @@
 import { Avatar, Box, Card, CardActions, CardContent, CardHeader, IconButton, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 import { useCart } from "react-use-cart";
+import kConst from "../const";
+import CartService from "../services/cart.service";
 
-export default function BookCardSmall(props) {
-    const { updateItemQuantity, getItem, removeItem } = useCart();
-    const item = getItem(props.itemId);
-    const Book = item.book;
+export default function BookCardSmall({item}) {
+    const [quantity, setQuantity] = useState(item.quantity);
+
+    const updateItemQuantity = ()=>{
+        CartService.updateQuantity(item.isbn, quantity);
+    }
+
+    const removeItem = ()=>{
+        CartService.removeFromCart(item.isbn);
+    }
     
     return (
         <Card sx={{ display: 'flex', alignItems: 'stretch', justifyContent: 'space-between'}}>
             <CardHeader
                 avatar={
-                    <Avatar src={Book.image}/>
+                    <Avatar src={item.link??kConst.placeholder_image}/>
                 }
 
-                title={Book.name}
-                subheader={Book.author}
+                title={item.name}
+                subheader={item.author_name}
             />
             <CardContent sx={{display: 'flex', alignItems: 'center' , justifyContent: 'space-between', }}>
                 <TextField
@@ -22,15 +31,16 @@ export default function BookCardSmall(props) {
                     label="Quanity"
                     type="number"
                     size="small"
-                    value={item.quantity}
-                    onChange={(event)=> updateItemQuantity(item.id , event.target.value)}
+                    value={quantity}
+                    onChange={(event)=> setQuantity(event.target.value)}
+                    onBlur={()=> updateItemQuantity()}
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
                 <Box sx={{pl: 10}}>
                     <Typography variant='body2'> {"Unit price: " + item.price}</Typography>
-                    <Typography variant='body2'> {"Total price: " + item.price * item.quantity}</Typography>
+                    <Typography variant='body2'> {"Total price: " + item.price * quantity}</Typography>
                 </Box>
             </CardContent>
             <CardActions>

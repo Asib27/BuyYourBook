@@ -4,6 +4,19 @@ import AuthService from './auth.service';
 
 const API_URL = kConst.base_url + '/api/cart';
 
+const axiosDeleteUtil = async(url, payload)=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let data = await axios.delete(
+        url, payload, config
+    ).catch(err => console.log(err.response));
+
+    return data;
+}
+
 const axiosPostUtil = async(url, payload)=>{
     const token = AuthService.getToken().jwtToken;
     const config = {
@@ -50,37 +63,24 @@ const addToCart = async (bookId, quantity)=>{
 
 const getCart = async()=>{
     let data = await axiosGetUtil(API_URL + '/get/data');
-    data = data.data;
-    let res = data.map(book=>{
-        return {
-            'isbn': book[0],
-            'edition': book[1],
-            'genre': book[2],
-            'language': book[3],
-            'name': book[4],
-            'price': book[5],
-            'quantity': book[6]
-        };
-    });
-    console.log(data);
-    return data;
+    return data.data;
 }
 
 const removeFromCart = async(bookId)=>{
-    let data = await axiosPostUtil(API_URL + '/remove?bookId=' + bookId, {
+    let data = await axiosDeleteUtil(API_URL + '/remove?bookId=' + bookId, {
         bookId: bookId
     });
     return data.status === 200;
 }
 
 const emptyCart = async()=>{
-    let data = await axiosPostUtil(API_URL + '/removeAll', {
+    let data = await axiosDeleteUtil(API_URL + '/removeAll', {
     });
     return data.status === 200;
 }
 
 const updateQuantity = async(bookId, quantity)=>{
-    let data = await axiosPostUtil(API_URL + '/add?bookId=' + bookId + '&quantity=' + quantity, {
+    let data = await axiosPostUtil(API_URL + '/updateQuantity?bookId=' + bookId + '&quantity=' + quantity, {
         bookId: bookId,
         quantity: quantity
     });

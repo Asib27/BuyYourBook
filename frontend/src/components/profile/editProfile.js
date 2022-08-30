@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import UserService from "../../services/user.service";
 import useFailedSnackbarHelper from "../failSnackbar";
 import useSuccessSnackbarHelper from "../successSnackbar";
+import AddressForm from "./profileForms/addressForm";
 import DescriptionForm from "./profileForms/descriptionForm";
 import PersonalInfoForm from "./profileForms/personalInfoForm";
 import ProfileForm from "./profileForms/profileForm";
@@ -115,77 +116,6 @@ const PlatformInfoForm = (props)=>{
     )
 }
 
-const AddressForm = (props)=>{
-    return (
-        <Card raised>
-            <CardHeader title='Your Address'/>
-            <CardContent>
-                <Formik
-                    initialValues={{    
-                        streetAddress: '', 
-                        district: '', 
-                        country: '', 
-                    }}
-                    validationSchema={
-                        Yup.object({
-                            streetAddress: Yup.string(),
-                            district: Yup.string(),
-                            country: Yup.string(),
-                        })
-                    }
-                    onSubmit={(values, {setSubmitting})=>{
-                        console.log(values);
-                    }}
-                >
-                    {formik=>(
-                        <Form>
-                            <Field
-                                component={TextField}
-                                margin="normal"
-                                fullWidth
-                                id="streetAddress"
-                                label="Street Address"
-                                name="streetAddress"
-                                autoComplete="street-address"
-                            />
-
-                            <Field
-                                component={TextField}
-                                margin="normal"
-                                fullWidth
-                                id="district"
-                                label="District"
-                                name="district"
-                                autoComplete="address-level1"
-                            />
-
-                            <Field
-                                component={TextField}
-                                margin="normal"
-                                fullWidth
-                                id="country"
-                                label="Country"
-                                name="country"
-                                autoComplete="country-name"
-                            />
-
-                            <Button
-                                type="submit"
-                                color='primary'
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                            >
-                                Submit
-                            </Button>
-                        </Form>
-                    )}
-
-                </Formik>
-            </CardContent>
-        </Card>
-    )
-}
 
 export default function EditProfile(props){
     const { setOpenSnackbar, SnackbarHelper} = useSuccessSnackbarHelper("Info update succesfully");

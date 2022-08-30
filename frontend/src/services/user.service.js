@@ -1,7 +1,6 @@
 import axios from "axios";
 import kConst from "../const";
 import AuthService from "./auth.service";
-import ImageService from "./image.service";
 
 const API_KEY = kConst.base_url + '/api/user';
 
@@ -93,6 +92,16 @@ const updateImage = async(img)=>{
     return data.status === 200;
 }
 
+const updateLocation = async(loc)=>{
+    let data = await axiosPostUtil(API_KEY + '/add/Location', loc);
+    return data.status===200;
+}
+
+const getLocation = async()=>{
+    let data = await axiosGetUtil(API_KEY + '/get/Location');;
+    return data.data;
+}
+
 const UserService = {
     getUserData,
     getUsername,
@@ -102,7 +111,9 @@ const UserService = {
     updateAboutInfo,
     updateImage,
     getPersonalInfo,
-    getAboutInfo
+    getAboutInfo,
+    updateLocation,
+    getLocation
 }
 
 export default UserService;
