@@ -11,6 +11,8 @@ import MuiAlert from '@mui/material/Alert';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import StripeCheckout from "react-stripe-checkout";
 import CartService from "../services/cart.service";
+import useSuccessSnackbarHelper from "../components/successSnackbar";
+import useFailedSnackbarHelper from "../components/failSnackbar";
 
 let addressResponse = "";
 
@@ -134,34 +136,29 @@ const AddressCard = (props)=>{
     )
 }
 
-const Alert = forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 const BuyCard = (props)=>{
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const handleSnackbarClose = (event, reason)=>{
-        if (reason === 'clickaway') {
-            return;
-          }
-      
-        setOpenSnackbar(false);
-    }
+    const { setOpenSnackbar, SnackbarHelper} = useSuccessSnackbarHelper("Info update succesfully");
+    const { setFailOpenSnackbar, FailedSnackbarHelper} = useFailedSnackbarHelper("Coupon you entered maybe expired or invalid ");
+    const [discountedPrice, setDiscountedPrice] = useState(0);
 
-    const {cartTotal , updateCartMetadata} = useCart();
-    let metadata = {
-        discount: 0
-    };
-    if(metadata.discount === undefined){
-        updateCartMetadata({discount: 0});
-    }
+    const [cartTotal, setCartTotal] = useState(undefined);
+    useEffect(()=>{
+        const fetchData = async()=>{
+            const data = await CartService.totalPrice();
+            setCartTotal(data);
+            setDiscountedPrice(data);
+        }
+        fetchData();
+    }, [])
 
-    const couponOnClick = (code)=>{
-        const discount = cartService.verifyCouponCode(code);
-        if(discount === 0){
-            setOpenSnackbar(true);
+
+    const couponOnClick = async(code)=>{
+        const price = await cartService.verifyCouponCode(code);
+        setDiscountedPrice(price);
+        if(price === cartTotal){
+            setFailOpenSnackbar(true);
         }else{
-            updateCartMetadata({discount: discount});
+            setOpenSnackbar(true);
         }
     }
 
@@ -173,19 +170,40 @@ const BuyCard = (props)=>{
     return (
         <Paper sx={{width: '100%', m: 2,  p: 2}}>
             <Stack direction='column' sx={{width: '100%',}}>
-                <Box sx={{display: 'flex', justifyContent:'space-between', mx:2, mt:2}}>
-                    <Typography variant='h6'>Total Price</Typography>
-                    <Typography>{'BDT' + cartTotal}</Typography>
-                </Box>
-                <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
-                    <Typography variant='h6'>Discount</Typography>
-                    <Typography >{'BDT' + metadata.discount}</Typography>
-                </Box>
+                {
+                    cartTotal? (
+                        <Box sx={{display: 'flex', justifyContent:'space-between', mx:2, mt:2}}>
+                            <Typography variant='h6'>Total Price</Typography>
+                            <Typography>{'BDT ' + cartTotal}</Typography>
+                        </Box>
+                    ):(
+                        <Skeleton sx={{m : 2}} variant="rectangular" height={75}/>
+                    )
+                }
+
+                {
+                    cartTotal? (
+                        <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
+                            <Typography variant='h6'>Discount</Typography>
+                            <Typography >{'BDT ' + (cartTotal - discountedPrice)}</Typography>
+                        </Box>
+                    ):(
+                        <Skeleton sx={{m : 2}} variant="rectangular" height={75}/>
+                    )
+                }
+
                 <Divider variant="inset"/>
-                <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
-                    <Typography color='red' variant='h6'>Final Price</Typography>
-                    <Typography color='red'>{'BDT ' + ((cartTotal < metadata.discount)? 0: (cartTotal - metadata.discount))}</Typography>
-                </Box>
+
+                {
+                    cartTotal? (
+                        <Box sx={{display: 'flex', justifyContent:'space-between', m:2}}>
+                            <Typography color='red' variant='h6'>Final Price</Typography>
+                            <Typography color='red'>{'BDT ' + discountedPrice}</Typography>
+                        </Box>
+                    ):(
+                        <Skeleton sx={{m : 2}} variant="rectangular" height={75}/>
+                    )
+                }
 
                 <Formik 
                     initialValues={{coupon: ''}}
@@ -235,12 +253,8 @@ const BuyCard = (props)=>{
                         </Button>
                 </StripeCheckout>
             </Stack>
-            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
-                <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
-                <AlertTitle>Invalid Coupon</AlertTitle>
-                    Coupon you entered maybe expired or invalid 
-                </Alert>
-            </Snackbar>
+            <SnackbarHelper/>
+            <FailedSnackbarHelper/>
         </Paper>
     )
 }

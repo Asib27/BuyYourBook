@@ -47,10 +47,6 @@ const axiosGetUtil = async(url)=>{
 }
 
 const addToCart = async (bookId, quantity)=>{
-    // const {addItem} = useCart();
-
-    // let data = await axiosPostUtil(kConst.base_url + '/api/review/upvote/1');
-    // let data = await axiosGetUtil(API_URL + '/totalPrice');
     let data = await axiosPostUtil(API_URL + '/add?bookId=' + bookId + '&quantity=' + quantity, {
         bookId: bookId,
         quantity: quantity
@@ -91,9 +87,8 @@ const updateQuantity = async(bookId, quantity)=>{
 }
 
 const totalPrice = async()=>{
-    let data = await axiosPostUtil(API_URL + '/totalPrice', {
-    });
-    return data;
+    let data = await axiosGetUtil(API_URL + '/totalPrice');
+    return data.data;
 }
 
 /**
@@ -101,9 +96,8 @@ const totalPrice = async()=>{
  * @param {*} code coupon code
  * @returns discount
  */
-const useVerifyCouponCode = async(code)=>{
-    let data = await axiosPostUtil(API_URL + '/totalPrice', {
-    });
+const verifyCouponCode = async(code)=>{
+    let data = await axiosGetUtil(API_URL + '/applyCoupon');
     return data.data;
 }
 
@@ -112,7 +106,7 @@ const CartService = {
     addToCart,
     removeFromCart,
     updateQuantity,
-    useVerifyCouponCode,
+    verifyCouponCode,
     totalPrice,
     emptyCart
 }

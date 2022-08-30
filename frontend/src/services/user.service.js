@@ -98,7 +98,7 @@ const updateLocation = async(loc)=>{
 }
 
 const getLocation = async()=>{
-    let data = await axiosGetUtil(API_KEY + '/get/Location');;
+    let data = await axiosGetUtil(API_KEY + '/get/location');;
     return data.data;
 }
 
