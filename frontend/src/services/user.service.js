@@ -6,6 +6,8 @@ const API_KEY = kConst.base_url + '/api/user';
 
 const getUserData = ()=>{
     const user =  JSON.parse(localStorage.getItem("user"));
+
+    if(!user) return undefined;
     delete user.accessToken;
     delete user.refreshToken;
 
@@ -119,6 +121,11 @@ const getFollowing = async()=>{
     return data.data;
 }
 
+const follow = async(userId)=>{
+    let data = await axiosPostUtil(API_KEY + '/follows/'+userId, {});
+    return data.data;
+}
+
 const UserService = {
     getUserData,
     getUsername,
@@ -134,7 +141,8 @@ const UserService = {
     getAllUsers,
     getCurrentUserFullInfo,
     getFollowers,
-    getFollowing
+    getFollowing,
+    follow
 }
 
 export default UserService;

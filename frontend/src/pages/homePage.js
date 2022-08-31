@@ -1,4 +1,4 @@
-import { Box, Skeleton} from "@mui/material";
+import { Box, Grid, Skeleton} from "@mui/material";
 import BookCardMedium from "../components/book_card_mid";
 import {Carousel} from "@mantine/carousel";
 import CommentCard from "../components/comment";
@@ -23,17 +23,23 @@ export default function HomePage(props) {
         {
             loaded?(
                 <Box >
-                    <Carousel align='start' slideSize="70%" height={200} slideGap="sm" controlsOffset="xs" controlSize={29} loop>
+                    {/* <Carousel align='start' slideSize="70%" height={200} slideGap="sm" controlsOffset="xs" controlSize={29} loop>
                         {
                             books.map((book, idx)=>{
                                 return (<BookCardMedium key={idx}  book={book}/>);
                             })
                         }
-                    </Carousel>
-                    {/* <CommentCard key={1} comment_id={1}/>
-                    <CommentCard key={2} comment_id={2}/>
-                    <CommentCard key={3} comment_id={3}/>
-                    <CommentCard key={4} comment_id={0}/> */}
+                    </Carousel> */}
+                    <Grid container spacing={2} sx={{pt: 2}}>
+                        {
+                            books.map((book, idx)=>{
+                                return (<Grid item lg={4} sm={4} xl={4} xs={12}>
+                                            <BookCardMedium key={idx}  book={book}/>
+                                        </Grid>
+                                        );
+                            })
+                        }
+                    </Grid>
                 </Box>
             ) : (
                 <Skeleton sx={{m : 2}} variant="rectangular" animation="wave" height={100}/>

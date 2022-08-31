@@ -15,8 +15,10 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import { Rating, Stack } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating, Stack } from '@mui/material';
 import commentService from '../services/comment.service';
+import VoteService from '../services/vote.service';
+import UserService from '../services/user.service';
 
 const VOTE_TYPE = {
   UP: 1,
@@ -61,6 +63,62 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
+const ProfileInfo = (props)=>{
+  const profile = props.profile;
+  const closeModal = props.closeModal;
+
+  const onClickingFollow = async()=>{
+    await UserService.follow(profile.id);
+    closeModal(true);
+  }
+  return (
+
+    <Card>
+      <CardHeader
+        title={<
+          Typography variant='h5' 
+          sx={{ }} 
+          align='left'>
+            Profile Information
+        </Typography>}
+      />
+      <CardContent>
+        <Typography align='left' variant='body1' sx={{mb : 2}}>{profile.description}</Typography>
+        <Box display='flex' justifyContent='space-between'>
+          <Box sx={{fontWeight: 'bold'}}>
+            Fullname: 
+          </Box>
+          <Typography variant='body1'> {" " + profile.fullname}</Typography>
+        </Box>
+
+        <Box display='flex' justifyContent='space-between'>
+          <Box sx={{fontWeight: 'bold'}}>
+            Mobile: 
+          </Box>
+          <Typography variant='body1'> {" " + profile.mobile}</Typography>
+        </Box>
+
+        <Box display='flex' justifyContent='space-between'>
+          <Box sx={{fontWeight: 'bold'}}>
+            Email: 
+          </Box>
+          <Typography variant='body1'> {" " + profile.email}</Typography>
+        </Box>
+
+        <Box display='flex' justifyContent='space-between'>
+          <Box sx={{fontWeight: 'bold'}}>
+            Location: 
+          </Box>
+          <Typography variant='body1'> {"  " + profile.address}</Typography>
+        </Box>
+
+        <Button fullWidth onClick={()=>onClickingFollow()}>
+          Follow
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 
 const CardheadSubheader = (props) =>{
   return (
@@ -92,8 +150,45 @@ export default function CommentCard({comment}) {
     setExpanded(!expanded);
   };
 
-  const votePressed = (voteType) =>{
+  const [openedModal, setOpenedModal] = React.useState(false);
+  const handleModalClose = ()=> setOpenedModal(false);
+
+
+  const ProductAddDialog = (props) =>{
+    console.log(comment.user);
+    const profile = {
+      id: comment.user.id,
+      description: comment.user.description,
+        fullname: (!comment.user.first_name && comment.user.middle_name && comment.user.last_name) ? 'N/A' 
+        : (comment.user.first_name??'') + ' ' + (comment.user.middle_name??'') + ' '+ (comment.user.last_name??''),
+        email: comment.user.email,
+        mobile: comment.user.phone_no??"",
+        address: `${comment.user.location.street}, ${comment.user.location.district}, ${comment.user.location.country}`
+    }
+    return (
+      <Dialog 
+        open={props.openedModal} 
+        onClose={props.handleModalClose}
+        maxWidth='sm'
+        fullWidth
+      >
+        {/* <DialogTitle>Profile info</DialogTitle> */}
+                <DialogContent>
+                    
+                      <ProfileInfo profile={profile} closeModal={handleModalClose}/>
+                    
+
+                </DialogContent >
+                <DialogActions >
+                    <Button onClick={props.handleModalClose} fullWidth>Cancel</Button>
+                </DialogActions>
+      </Dialog>
+    )
+  }
+
+  const votePressed = async(voteType) =>{
     if(voteType === VOTE_TYPE.UP){
+      await VoteService.upvote(comment.id);
       if(voteStatus === VOTE_TYPE.UP){
         setTotalVote(totalVote - 1);
         setVoteStatus(VOTE_TYPE.NONE);
@@ -109,6 +204,7 @@ export default function CommentCard({comment}) {
     }
     
     if(voteType === VOTE_TYPE.DOWN){
+      await VoteService.downvote(comment.id);
       if(voteStatus === VOTE_TYPE.UP){
         setTotalVote(totalVote - 2);
         setVoteStatus(VOTE_TYPE.DOWN);
@@ -137,7 +233,7 @@ export default function CommentCard({comment}) {
             />
             }
             action={
-            <IconButton aria-label="settings">
+            <IconButton aria-label="settings" onClick={()=>setOpenedModal(true)}>
                 <MoreVertIcon />
             </IconButton>
             }
@@ -183,13 +279,15 @@ export default function CommentCard({comment}) {
               aria-expanded={expanded}
               aria-label="show more"
             >
-            <ExpandMoreIcon />
+              <ExpandMoreIcon />
             </ExpandMore>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
             {/* <CommentCard flag={true}/> */}
         </Collapse>
         </Card>
+
+        <ProductAddDialog openedModal={openedModal} handleModalClose={handleModalClose}/>
     </ThemeProvider>
   );
 }

@@ -15,12 +15,14 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/auth.service';
 import UserService from '../services/user.service';
+import { Stack } from '@mui/material';
 
 const pages = ['Home', 'Buy'];
 const pageToRoute = {
   'Home': '/home',
   'Buy': '/buy',
-  'Profile': '/profile'
+  'Profile': '/profile',
+  'Admin': '/admin'
 }
 const settings = ['Profile', 'Logout'];
 
@@ -61,6 +63,12 @@ const NavigationBar = () => {
   }
 
   const userAvatar = UserService.getUserAvatar();
+  const userInfo = UserService.getUserData();
+  if(userInfo && (userInfo.roles.includes("ROLE_MODERATOR") || userInfo.roles.includes("ROLE_ADMIN"))){
+    if(!pages.includes('Admin'))
+      pages.push('Admin');
+  }
+    
 
   return (
     <AppBar position="static">
@@ -71,7 +79,7 @@ const NavigationBar = () => {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            href="/home"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -82,7 +90,7 @@ const NavigationBar = () => {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            BuyYourBook
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -163,9 +171,15 @@ const NavigationBar = () => {
                   </IconButton>
                 </Tooltip>
               ):(
-                <Box>
-                  Signin
-                </Box>
+                <Stack direction='row'>
+                  <Button onClick={()=>navigate('/signin')}>
+                    Signin
+                  </Button>
+                  <Button onClick={()=>navigate('/signup')}>
+                    Signup
+                  </Button>
+                </Stack>
+                
               )
             }
             

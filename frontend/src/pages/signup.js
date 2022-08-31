@@ -52,12 +52,10 @@ export default function SignUp() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign Up
           </Typography>
           <Formik
             initialValues={{
-                firstName: '',
-                lastName: '',
                 uname: '',
                 email: '',
                 acceptedTerms: false, // added for our checkbox
@@ -107,34 +105,7 @@ export default function SignUp() {
                         />
                         <ErrorMessage name='uname' />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <Field 
-                            component={TextField}
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="firstName"
-                            label="First Name"
-                            name="firstName"
-                            autoComplete="given-name"
-                            autoFocus  
-                        />
-                        <ErrorMessage name='firstName' />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <Field 
-                            component={TextField}
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="lastName"
-                            label="Last Name"
-                            name="lastName"
-                            autoComplete="family-name"
-                            autoFocus  
-                        />
-                        <ErrorMessage name='lastName' />
-                    </Grid>
+                    
                     <Grid item xs={12}>
                         <Field 
                             component={TextField}
@@ -147,7 +118,6 @@ export default function SignUp() {
                             autoComplete="email"
                             autoFocus  
                         />
-                        <ErrorMessage name='email' />
                     </Grid>
                     <Grid item xs={12}>
                         <Field 
@@ -162,7 +132,6 @@ export default function SignUp() {
                             type="password"
                             autoFocus 
                         />      
-                        <ErrorMessage name='password' />
                     </Grid>
                     <Grid item xs={12} alignItems='flex-start' >
                         <Field
@@ -172,7 +141,6 @@ export default function SignUp() {
                             control={<Checkbox />}
                             label="Accept terms and conditions"
                         />      
-                        <ErrorMessage name='acceptedTerms' />
                     </Grid>
                     <Grid item xs={12} alignItems='flex-start'>
                         <Field
