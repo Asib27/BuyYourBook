@@ -147,7 +147,7 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                     {customer.email}
                   </TableCell>
                   <TableCell>
-                    {`${customer.location.street}, ${customer.location.district}, ${customer.location.country}`}
+                    
                   </TableCell>
                   <TableCell>
                     {customer.phone}

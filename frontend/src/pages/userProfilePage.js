@@ -69,10 +69,10 @@ export default function UserProfilePage(){
               <Tab label="Overview" {...a11yProps(0)} />
               <Tab label="Edit profile" {...a11yProps(1)} />
               <Tab label="Follow" {...a11yProps(2)} />
-              <Tab label="Item Four" {...a11yProps(3)} />
+              {/* <Tab label="Item Four" {...a11yProps(3)} />
               <Tab label="Item Five" {...a11yProps(4)} />
               <Tab label="Item Six" {...a11yProps(5)} />
-              <Tab label="Item Seven" {...a11yProps(6)} />
+              <Tab label="Item Seven" {...a11yProps(6)} /> */}
             </Tabs>
             <Container sx={{width: '80%'}}>
               <TabPanel value={tabValue} index={0}>
@@ -84,7 +84,7 @@ export default function UserProfilePage(){
               <TabPanel value={tabValue} index={2}>
                 <FollowerFollowPage/>
               </TabPanel>
-              <TabPanel value={tabValue} index={3}>
+              {/* <TabPanel value={tabValue} index={3}>
                 Complains and Support
               </TabPanel>
               <TabPanel value={tabValue} index={4}>
@@ -95,7 +95,7 @@ export default function UserProfilePage(){
               </TabPanel>
               <TabPanel value={tabValue} index={6}>
                 <NotFound/>
-              </TabPanel>
+              </TabPanel> */}
             </Container>
             
       </Box>

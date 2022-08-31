@@ -57,6 +57,7 @@ const NavigationBar = () => {
 
     if(value === 'Logout'){
       AuthService.logout();
+      navigate('/signin');
       return ;
     } 
     navigate(pageToRoute[value]);

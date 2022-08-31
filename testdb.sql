@@ -32,35 +32,23 @@ CREATE TYPE public.my_type AS (
 ALTER TYPE public.my_type OWNER TO postgres;
 
 --
--- Name: buy_items(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: buy_items(numeric, character varying, numeric, numeric); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.buy_items() RETURNS trigger
+CREATE PROCEDURE public.buy_items(IN userid numeric, IN book_id character varying, IN quant numeric, IN buy numeric)
     LANGUAGE plpgsql
     AS $$
-
-
-
-    BEGIN
-
-
-
-        INSERT INTO bought_items(user_id,book_id,quantity) VALUES(old.user_id, old.book_id, old.quantity);
-
-
-
-        RETURN OLD;
-
-
+BEGIN
+        if buy = 0 then
+            INSERT INTO bought_items(user_id,book_id,quantity) VALUES(userid, book_id,quant);
+        end if;
 
     END;
-
-
 
 $$;
 
 
-ALTER FUNCTION public.buy_items() OWNER TO postgres;
+ALTER PROCEDURE public.buy_items(IN userid numeric, IN book_id character varying, IN quant numeric, IN buy numeric) OWNER TO postgres;
 
 --
 -- Name: check_location(character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: postgres
@@ -116,6 +104,105 @@ $$;
 
 
 ALTER FUNCTION public.check_location(cn character varying, street character varying, dis character varying) OWNER TO postgres;
+
+--
+-- Name: check_vote_function(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.check_vote_function() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+
+declare
+
+    v_id numeric;
+
+    u_vote numeric;
+
+    d_vote numeric;
+
+BEGIN
+
+    select vote_id into v_id
+
+    from votes
+
+    where user_id = new.user_id
+
+    and review_id = new.review_id;
+
+
+
+    if v_id is null then
+
+        if new.up_vote = 1 then
+
+            update reviews set upvotes = upvotes + 1 where review_id = new.review_id;
+
+        elsif new.down_vote = 1 then
+
+            update reviews set downvotes = downvotes + 1 where review_id = new.review_id;
+
+        end if;
+
+        return NEW;
+
+    else
+
+        select up_vote, down_vote into u_vote, d_vote
+
+        from votes
+
+        where vote_id = v_id;
+
+
+
+        if u_vote = 1 and new.up_vote = 1 then
+
+            raise exception ' already upvoted';
+
+
+
+        elsif u_vote = 1 and new.down_vote = 1 then
+
+            delete from votes where vote_id = v_id;
+
+            update reviews set upvotes = upvotes - 1 where review_id = new.review_id;
+
+            update reviews set downvotes = downvotes + 1 where review_id = new.review_id;
+
+
+
+        elsif d_vote = 1 and new.down_vote = 1 then
+
+            raise exception ' already downvoted';
+
+
+
+        elsif d_vote = 1 and new.up_vote = 1 then
+
+            delete from votes where vote_id = v_id;
+
+            update reviews set upvotes = upvotes + 1 where review_id = new.review_id;
+
+            update reviews set downvotes = downvotes - 1 where review_id = new.review_id;
+
+        end if;
+
+
+
+    end if;
+
+
+
+    RETURN NEW;
+
+END;
+
+$$;
+
+
+ALTER FUNCTION public.check_vote_function() OWNER TO postgres;
 
 --
 -- Name: get_author(numeric); Type: FUNCTION; Schema: public; Owner: postgres
@@ -283,27 +370,22 @@ $$;
 ALTER FUNCTION public.insert_verification() OWNER TO postgres;
 
 --
--- Name: notification_buy_successful(bigint); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: notification_buy_successful(bigint, numeric); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.notification_buy_successful(IN user_id bigint)
+CREATE PROCEDURE public.notification_buy_successful(IN user_id bigint, IN buy numeric)
     LANGUAGE plpgsql
     AS $$
-
-
-
 begin
+    if buy = 1 then
+        insert into notification(notify_whom, type) values (user_id, 'buy successful');
+    end if;
+
+end;
+$$;
 
 
-
-   insert into notification(notify_whom, type) values (user_id, 'buy successful');
-
-
-
-end;$$;
-
-
-ALTER PROCEDURE public.notification_buy_successful(IN user_id bigint) OWNER TO postgres;
+ALTER PROCEDURE public.notification_buy_successful(IN user_id bigint, IN buy numeric) OWNER TO postgres;
 
 --
 -- Name: notification_downvote(bigint); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -419,55 +501,37 @@ $$;
 ALTER FUNCTION public.trigger_function() OWNER TO postgres;
 
 --
--- Name: update_transaction(bigint, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: update_transaction(bigint, double precision, numeric); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.update_transaction(IN user_id bigint, IN totalprice double precision)
+CREATE PROCEDURE public.update_transaction(IN user_id bigint, IN totalprice double precision, IN buy numeric)
     LANGUAGE plpgsql
     AS $$
-
-
-
 declare
-
-
 
     l_id  bigint;
 
-
-
 begin
 
+    if buy = 1 then
+        select location_id into l_id
 
+        from user_cloned
 
-    select location_id into l_id
-
-
-
-    from user_cloned
-
-
-
-    where userid = user_id;
+        where userid = user_id;
 
 
 
+        insert into transaction(location_id, user_id, total_price, added_time) values(l_id, user_id, totalPrice, now());
+    end if;
 
 
 
-
-    insert into transaction(location_id, user_id, total_price) values(l_id, user_id, totalPrice);
-
-
+end;
+$$;
 
 
-
-
-
-end;$$;
-
-
-ALTER PROCEDURE public.update_transaction(IN user_id bigint, IN totalprice double precision) OWNER TO postgres;
+ALTER PROCEDURE public.update_transaction(IN user_id bigint, IN totalprice double precision, IN buy numeric) OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -578,7 +642,7 @@ ALTER SEQUENCE public.books_isbn_seq OWNED BY public.books.isbn;
 
 CREATE TABLE public.bought_items (
     id bigint NOT NULL,
-    book_id bigint,
+    book_id character varying(13),
     quantity integer,
     user_id bigint
 );
@@ -811,41 +875,6 @@ ALTER TABLE public.notification ALTER COLUMN not_id ADD GENERATED ALWAYS AS IDEN
 
 
 --
--- Name: payment; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.payment (
-    payment_id bigint NOT NULL,
-    mobile character varying(255),
-    price integer,
-    type character varying(255)
-);
-
-
-ALTER TABLE public.payment OWNER TO postgres;
-
---
--- Name: payment_payment_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.payment_payment_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.payment_payment_id_seq OWNER TO postgres;
-
---
--- Name: payment_payment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.payment_payment_id_seq OWNED BY public.payment.payment_id;
-
-
---
 -- Name: publisher; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -973,9 +1002,9 @@ ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 CREATE TABLE public.transaction (
     tx_id bigint NOT NULL,
     location_id bigint,
-    payment_id bigint,
     user_id bigint,
-    total_price double precision
+    total_price double precision,
+    added_time timestamp without time zone
 );
 
 
@@ -1098,7 +1127,11 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 --
 
 CREATE TABLE public.votes (
-    vote_id bigint NOT NULL
+    vote_id bigint NOT NULL,
+    down_vote integer,
+    review_id bigint,
+    up_vote integer,
+    user_id bigint
 );
 
 
@@ -1151,13 +1184,6 @@ ALTER TABLE ONLY public.coupon ALTER COLUMN id SET DEFAULT nextval('public.coupo
 --
 
 ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
-
-
---
--- Name: payment payment_id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.payment ALTER COLUMN payment_id SET DEFAULT nextval('public.payment_payment_id_seq'::regclass);
 
 
 --
@@ -1230,12 +1256,12 @@ COPY public.authors (id, email, name) FROM stdin;
 --
 
 COPY public.books (isbn, edition, genre, language, name, price, quantity_available, publisher_id, link, description) FROM stdin;
-3	5	Romantic	Bangla	Choker bali	150	25	\N	\N	\N
-4	5	Play	English	Hamlet 	150	25	\N	\N	\N
 5	5	Novel	Bangla	Lalsalu	150	25	\N	\N	\N
 6	5	Novel	English	Pride and Prejudice	150	25	\N	\N	\N
 7	5	Novel	English	Oedipus Rex	150	25	\N	\N	\N
-1	5	Novel	Bangla	Padma Nodir Mazhi	150	25	4	\N	This book is all about nothing...
+3	5	Romantic	Bangla	Choker bali	150	23	\N	\N	\N
+4	5	Play	English	Hamlet 	150	23	\N	\N	\N
+1	5	Novel	Bangla	Padma Nodir Mazhi	150	21	4	\N	This book is all about nothing...
 \.
 
 
@@ -1265,6 +1291,10 @@ COPY public.bought_items (id, book_id, quantity, user_id) FROM stdin;
 11	1	2	4
 12	1	2	1
 13	1	2	1
+14	3	2	6
+15	4	2	6
+16	1	2	6
+17	1	2	1
 \.
 
 
@@ -1289,9 +1319,7 @@ COPY public.cart_book (cart_id, book_id) FROM stdin;
 --
 
 COPY public.cart_item (id, quantity, book_id, user_id) FROM stdin;
-14	2	1	6
-15	2	3	6
-16	2	4	6
+23	4	5	6
 \.
 
 
@@ -1352,14 +1380,8 @@ COPY public.notification (not_id, notify_whom, type) FROM stdin;
 11	4	buy successful
 12	1	buy successful
 13	1	buy successful
-\.
-
-
---
--- Data for Name: payment; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.payment (payment_id, mobile, price, type) FROM stdin;
+14	6	buy successful
+15	1	buy successful
 \.
 
 
@@ -1438,6 +1460,14 @@ COPY public.refreshtoken (id, expiry_date, token, user_id) FROM stdin;
 93	2022-09-01 00:05:53.998505	bab405aa-bfc0-47e4-8452-8ed7490c8302	6
 94	2022-09-01 00:10:06.930205	3424c550-d6a3-49f0-bfe5-cc61b1e27b1b	1
 95	2022-09-01 00:50:25.934614	4ebc77ad-4e71-470d-a99b-8af45cd158e0	1
+96	2022-09-01 02:03:05.252821	2ef867d3-c97c-4974-ba51-670dceb40d85	1
+101	2022-09-01 02:48:19.131256	6b7c1097-433a-42a2-b7c4-cd3821711b80	6
+102	2022-09-01 03:40:51.190643	d73351dd-4e19-45f0-9172-e2b73011ed56	6
+103	2022-09-01 05:38:54.551189	ba182357-2c12-47f9-b9ac-93885137c941	1
+104	2022-09-01 05:51:22.025283	477f8675-52d0-40f7-8d7f-e10e360892df	1
+105	2022-09-01 10:01:22.305626	15f42330-5946-4876-a5d7-4133ea25dc56	6
+106	2022-09-01 10:06:54.101833	19bbdcbf-79e2-4650-8d5a-486666112bfa	6
+107	2022-09-01 10:09:48.101428	fde0844a-59e0-4c0e-89e3-e3081cbe553e	6
 \.
 
 
@@ -1446,10 +1476,10 @@ COPY public.refreshtoken (id, expiry_date, token, user_id) FROM stdin;
 --
 
 COPY public.reviews (review_id, downvotes, rating, review, upvotes, book_id, user_id, add_date) FROM stdin;
-5	0	4	The book is excellent	0	1	6	2022-08-28 01:08:42
-6	0	3	The book is excellent	0	1	6	2022-08-28 01:09:49
 7	0	5	The book is excellent	0	1	6	2022-08-28 01:09:54
 8	0	2	The book is bad	0	4	6	2022-08-28 01:10:08
+5	2	4	The book is excellent	0	1	6	2022-08-28 01:08:42
+6	0	3	The book is excellent	0	1	6	2022-08-28 01:09:49
 \.
 
 
@@ -1468,7 +1498,9 @@ COPY public.roles (id, name) FROM stdin;
 -- Data for Name: transaction; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.transaction (tx_id, location_id, payment_id, user_id, total_price) FROM stdin;
+COPY public.transaction (tx_id, location_id, user_id, total_price, added_time) FROM stdin;
+6	\N	6	900	2022-08-31 05:40:20.068278
+7	16	1	300	2022-08-31 05:42:41.825594
 \.
 
 
@@ -1520,7 +1552,9 @@ COPY public.users (id, email, passwd, username) FROM stdin;
 -- Data for Name: votes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.votes (vote_id) FROM stdin;
+COPY public.votes (vote_id, down_vote, review_id, up_vote, user_id) FROM stdin;
+2	1	5	0	2
+100	1	6	0	1
 \.
 
 
@@ -1542,7 +1576,7 @@ SELECT pg_catalog.setval('public.books_isbn_seq', 7, true);
 -- Name: bought_items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.bought_items_id_seq', 13, true);
+SELECT pg_catalog.setval('public.bought_items_id_seq', 17, true);
 
 
 --
@@ -1556,7 +1590,7 @@ SELECT pg_catalog.setval('public.cart_cart_id_seq', 1, false);
 -- Name: cart_item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cart_item_id_seq', 16, true);
+SELECT pg_catalog.setval('public.cart_item_id_seq', 23, true);
 
 
 --
@@ -1570,7 +1604,7 @@ SELECT pg_catalog.setval('public.coupon_id_seq', 4, true);
 -- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.hibernate_sequence', 95, true);
+SELECT pg_catalog.setval('public.hibernate_sequence', 107, true);
 
 
 --
@@ -1584,14 +1618,7 @@ SELECT pg_catalog.setval('public.locations_id_seq', 16, true);
 -- Name: notification_not_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.notification_not_id_seq', 13, true);
-
-
---
--- Name: payment_payment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.payment_payment_id_seq', 1, false);
+SELECT pg_catalog.setval('public.notification_not_id_seq', 15, true);
 
 
 --
@@ -1619,7 +1646,7 @@ SELECT pg_catalog.setval('public.roles_id_seq', 1, false);
 -- Name: transaction_tx_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.transaction_tx_id_seq', 5, true);
+SELECT pg_catalog.setval('public.transaction_tx_id_seq', 7, true);
 
 
 --
@@ -1730,14 +1757,6 @@ ALTER TABLE ONLY public.locations
 
 ALTER TABLE ONLY public.notification
     ADD CONSTRAINT notification_pkey PRIMARY KEY (not_id);
-
-
---
--- Name: payment payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.payment
-    ADD CONSTRAINT payment_pkey PRIMARY KEY (payment_id);
 
 
 --
@@ -1853,10 +1872,10 @@ ALTER TABLE ONLY public.votes
 
 
 --
--- Name: cart_item update_buy_items; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: votes last_name_changes; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
-CREATE TRIGGER update_buy_items BEFORE DELETE ON public.cart_item FOR EACH ROW EXECUTE FUNCTION public.buy_items();
+CREATE TRIGGER last_name_changes BEFORE INSERT ON public.votes FOR EACH ROW EXECUTE FUNCTION public.check_vote_function();
 
 
 --
@@ -2023,14 +2042,6 @@ ALTER TABLE ONLY public.follows
 
 ALTER TABLE ONLY public.transaction
     ADD CONSTRAINT fkpuojn1u1lygt1ve5a23xijay7 FOREIGN KEY (location_id) REFERENCES public.locations(id);
-
-
---
--- Name: transaction fkq9m7rb5uydysanp8smxcovxlh; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.transaction
-    ADD CONSTRAINT fkq9m7rb5uydysanp8smxcovxlh FOREIGN KEY (payment_id) REFERENCES public.payment(payment_id);
 
 
 --
