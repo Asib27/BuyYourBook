@@ -29,7 +29,7 @@ const getBookIds = async ()=>{
     };
 
     let data = await axios.get(
-        API_URL + '/get/random/5', config
+        API_URL + '/get/random/10', config
     ).catch(err => console.log(err.response));
     
     return data.data;
@@ -51,9 +51,40 @@ const getBookByIsbn = async (isbn)=>{
     return data.data;
 }
 
+const addBooks = async(book)=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+
+    let data = await axios.get(
+        API_URL + '/add' , book,
+        config
+    ).catch(err => console.log(err.response));
+
+    return data.data;
+}
+
+const getAllBooks = async()=>{
+    const token = AuthService.getToken().jwtToken;
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let data = await axios.get(
+        API_URL + '/', config
+    ).catch(err => console.log(err.response));
+    
+    return data.data;
+}
+
 const bookService = {
     getBookIds,
-    getBookByIsbn
+    getBookByIsbn,
+    addBooks,
+    getAllBooks
 }
 
 export default bookService;

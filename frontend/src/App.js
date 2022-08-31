@@ -10,6 +10,8 @@ import HomePage from './pages/homePage';
 import ReviewPage from './pages/reviewPage';
 import UserProfilePage from './pages/userProfilePage';
 import Test from './pages/test';
+import AdminPage from './pages/admin';
+import NotFound from './pages/404';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path='/home' element={<HomePage/>}/>
           <Route path='/buy' element={<BuyPage/>}/>
           <Route path='/test' element={<Test/>}/>
+          <Route path='/admin' element={<AdminPage/>}/>
+          <Route path='*' element={<NotFound/>}/>
         </Routes>
       </CartProvider>
     </div>

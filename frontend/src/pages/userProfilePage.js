@@ -4,11 +4,8 @@ import * as React from 'react';
 
 import ProfileOverviewTab from '../components/profile/profileOverviewTab';
 import EditProfile from '../components/profile/editProfile';
-import Dashboard from './index';
 import Customers from './customers';
 import Products from './products';
-import Account from './account';
-import Settings from './settings';
 import NotFound from './404';
 import FollowerFollowPage from './follower';
 

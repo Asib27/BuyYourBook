@@ -19,6 +19,7 @@ import {  TextField as FormicTextField }  from 'formik-mui' ;
 
 import * as Yup from 'yup';
 import ImageService from '../../services/image.service';
+import bookService from '../../services/book.service';
 
 const BookForm = ({closeModal})=>{
 
@@ -39,8 +40,8 @@ const BookForm = ({closeModal})=>{
           })}
           onSubmit={async (values, { resetForm }) => {
             const data = await ImageService.uploadImage(values.image);
-            console.log(values);
-            console.log(data);
+            values.link = data;
+            await bookService.addBooks(values);
             closeModal();
           }}
         >
@@ -156,6 +157,7 @@ const BookForm = ({closeModal})=>{
 export const ProductListToolbar = (props) => {
   const [openedModal, setOpenedModal] = useState(false);
   const handleModalClose = ()=> setOpenedModal(false);
+
 
   const ProductAddDialog = (props) =>{
     return (

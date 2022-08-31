@@ -31,7 +31,7 @@ export const CustomerListToolbar = ({searchKey, setSearch}) => {
           Customers
         </Typography>
         <Box sx={{ m: 1 }}>
-          <Button
+          {/* <Button
             startIcon={(<UploadIcon fontSize="small" />)}
             sx={{ mr: 1 }}
           >
@@ -42,13 +42,13 @@ export const CustomerListToolbar = ({searchKey, setSearch}) => {
             sx={{ mr: 1 }}
           >
             Export
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             color="primary"
             variant="contained"
           >
             Add Customers
-          </Button>
+          </Button> */}
         </Box>
       </Box>
       <Box sx={{ mt: 3 }}>

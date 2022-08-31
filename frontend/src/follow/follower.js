@@ -2,7 +2,6 @@
 import { Box, Container, Skeleton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { CustomerListResults } from '../components/customer/customer-list-results';
-import { CustomerListToolbar } from '../components/customer/customer-list-toolbar';
 import UserService from '../services/user.service';
 import { FollowListToolbar } from './followListToolbar';
 

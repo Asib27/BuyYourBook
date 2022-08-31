@@ -38,9 +38,6 @@ const axiosPostUtil = async(url, payload)=>{
         headers: { Authorization: `Bearer ${token}` }
     };
 
-    // let body = new FormData(payload);
-    // console.log(body);
-
     let data = await axios.post(
         url, payload, config
     ).catch(err => console.log(err.response));

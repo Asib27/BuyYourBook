@@ -140,11 +140,16 @@ export default function BookCardLarge(props) {
     const { setOpenedModal, CommentModal} = useModalHelper();
     const { setOpenSnackbar, SnackbarHelper} = useSuccessSnackbarHelper("Item added to the cart succesfully");
     const { setFailOpenSnackbar, FailedSnackbarHelper} = useFailedSnackbarHelper("Item could not be added to the cart. Please try again.");
+    const [rating, setRating] = React.useState(undefined);
 
     const Book = props.book;
     const BookName = Book.name.trim();
     const BookAuthor = Book.writersOfTheBook.map(w=>w.name).join(' , ').trim();;
     const description = Book.description;
+
+    React.useEffect(()=>{
+        
+    }, [])
 
     const onClickingBuy = async()=>{
         let res = await CartService.addToCart(Book.isbn, 1)
@@ -194,9 +199,9 @@ export default function BookCardLarge(props) {
                 <IconButton aria-label="Buy" onClick={onClickingBuy}>
                     <AddShoppingCartIcon/>
                 </IconButton>
-                <IconButton aria-label="Share">
+                {/* <IconButton aria-label="Share">
                     <ShareIcon/>
-                </IconButton>
+                </IconButton> */}
                 <IconButton aria-label="Review" onClick={() => onClickReview()}>
                     <InsertCommentOutlinedIcon/>
                 </IconButton>
