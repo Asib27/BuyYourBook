@@ -4,19 +4,23 @@ import { useCart } from "react-use-cart";
 import kConst from "../const";
 import CartService from "../services/cart.service";
 
-export default function BookCardSmall({item}) {
+export default function BookCardSmall({item, update}) {
     const [quantity, setQuantity] = useState(item.quantity);
+    const [display, setDisplay] = useState(true);
 
-    const updateItemQuantity = ()=>{
-        CartService.updateQuantity(item.isbn, quantity);
+    const updateItemQuantity = async()=>{
+        await CartService.updateQuantity(item.isbn, quantity);
+        update();
     }
 
-    const removeItem = ()=>{
-        CartService.removeFromCart(item.isbn);
+    const removeItem = async()=>{
+        await CartService.removeFromCart(item.isbn);
+        update();
+        setDisplay(false);
     }
     
     return (
-        <Card sx={{ display: 'flex', alignItems: 'stretch', justifyContent: 'space-between'}}>
+        <Card sx={{ display: display?'flex': 'none', alignItems: 'stretch', justifyContent: 'space-between'}}>
             <CardHeader
                 avatar={
                     <Avatar src={item.link??kConst.placeholder_image}/>

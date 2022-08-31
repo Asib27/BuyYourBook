@@ -10,6 +10,7 @@ import Products from './products';
 import Account from './account';
 import Settings from './settings';
 import NotFound from './404';
+import FollowerFollowPage from './follower';
 
 // role_user = overview, edit profile, payments, complain and support, follower
 // role admin = overview, edit profile, payments, follower, complain and support, Dashboard, customers, products
@@ -70,7 +71,7 @@ export default function UserProfilePage(){
             >
               <Tab label="Overview" {...a11yProps(0)} />
               <Tab label="Edit profile" {...a11yProps(1)} />
-              <Tab label="Item Three" {...a11yProps(2)} />
+              <Tab label="Follow" {...a11yProps(2)} />
               <Tab label="Item Four" {...a11yProps(3)} />
               <Tab label="Item Five" {...a11yProps(4)} />
               <Tab label="Item Six" {...a11yProps(5)} />
@@ -84,7 +85,7 @@ export default function UserProfilePage(){
                 <EditProfile/>
               </TabPanel>
               <TabPanel value={tabValue} index={2}>
-                Payment
+                <FollowerFollowPage/>
               </TabPanel>
               <TabPanel value={tabValue} index={3}>
                 Complains and Support

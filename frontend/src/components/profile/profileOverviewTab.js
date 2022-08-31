@@ -1,11 +1,31 @@
-import { Avatar, Box, Card, CardActions, CardHeader, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, Card, CardActions, CardHeader, CircularProgress, IconButton, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
 import ProfileBottomContent from "./profileExtended";
 import UserService from "../../services/user.service";
+import { useEffect, useState } from "react";
 
 const ProfileOverview = (props) =>{
-    const profile = props.profile;
+    // const profile = props.profile;
     const userInfo = UserService.getUserAvatar();
+    const [follower, setFollower] = useState(undefined);
+    const [followed, setFollowed] = useState();
+
+    useEffect(() => {
+        const fetchData = async()=>{
+            const data = await UserService.getFollowers();
+            setFollower(data.length);
+        }
+        fetchData();
+    }, [])
+
+    useEffect(() => {
+        const fetchData = async()=>{
+            const data = await UserService.getFollowing();
+            setFollowed(data.length);
+        }
+        fetchData();
+    }, [])
+    
     
     return (
     <Card sx={{display: 'flex', justifyContent: 'space-between' , p : 1, m: 1}}>
@@ -21,20 +41,23 @@ const ProfileOverview = (props) =>{
                         {userInfo.username}
                     </Typography>
                 }
-                subheader={
-                    <Typography variant='body1' align='left'>
-                        {profile.tag}
-                    </Typography>
-                }
             />
 
             <CardActions sx={{typography:'body1' ,display: 'flex', flexDirection: 'column',  justifyContent: 'center' }}>
-                <IconButton aria-label="Buy" size='small'>
-                    {"Followers: " + profile.follower}
-                </IconButton>
-                <IconButton aria-label="Buy" size='small'>
-                    {"Follows: " + profile.follows}
-                </IconButton>
+                {
+                    (follower !== undefined && followed !== undefined)?(
+                        <>
+                            <IconButton aria-label="Buy" size='small'>
+                                {"Followers: " + follower}
+                            </IconButton>
+                            <IconButton aria-label="Buy" size='small'>
+                                {"Follows: " + followed}
+                            </IconButton>
+                        </>
+                    ):(
+                        <CircularProgress />
+                    )
+                }
             </CardActions>
         </Card>
     )

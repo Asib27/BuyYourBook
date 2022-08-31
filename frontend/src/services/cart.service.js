@@ -4,14 +4,14 @@ import AuthService from './auth.service';
 
 const API_URL = kConst.base_url + '/api/cart';
 
-const axiosDeleteUtil = async(url, payload)=>{
+const axiosDeleteUtil = async(url)=>{
     const token = AuthService.getToken().jwtToken;
     const config = {
         headers: { Authorization: `Bearer ${token}` }
     };
 
     let data = await axios.delete(
-        url, payload, config
+        url, config
     ).catch(err => console.log(err.response));
 
     return data;
@@ -63,15 +63,12 @@ const getCart = async()=>{
 }
 
 const removeFromCart = async(bookId)=>{
-    let data = await axiosDeleteUtil(API_URL + '/remove?bookId=' + bookId, {
-        bookId: bookId
-    });
+    let data = await axiosDeleteUtil(API_URL + '/remove?isbn=' + bookId);
     return data.status === 200;
 }
 
 const emptyCart = async()=>{
-    let data = await axiosDeleteUtil(API_URL + '/removeAll', {
-    });
+    let data = await axiosDeleteUtil(API_URL + '/removeAll');
     return data.status === 200;
 }
 

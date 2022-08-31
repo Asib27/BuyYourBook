@@ -9,22 +9,11 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
-import { Avatar, FormControlLabel, IconButton, Stack, Switch } from '@mui/material';
+import { Avatar, FormControlLabel, IconButton, Skeleton, Stack, Switch } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { red } from '@mui/material/colors';
+import UserService from '../../services/user.service';
 
-// function Copyright(props) {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
 
 const PlatformSetting = ()=>{
   return (
@@ -162,13 +151,21 @@ const Conversations = (props)=>{
 }
 
 function ProfileBottomContent(props) {
-  const profile = {
-    description: "lores ipsum tores lores ipsum tores lores ipsum tores",
-    fullname: 'Lores M Ipsum',
-    email: 'lores@ipsum.com',
-    mobile: '+880 11111 11111',
-    address: ' Dhaka, Bangladesh'
-  }
+  const [profile, setProfile] = React.useState(undefined);
+  React.useEffect(() => {
+    const fetchData = async()=>{
+      const data = await UserService.getCurrentUserFullInfo();
+      setProfile({
+        description: data.description,
+        fullname: (!data.first_name && data.middle_name && data.last_name) ? 'N/A' 
+        : (data.first_name??'') + ' ' + (data.middle_name??'') + ' '+ (data.last_name??''),
+        email: data.email,
+        mobile: data.phone_no??"",
+        address: `${data.location.street}, ${data.location.district}, ${data.location.country}`
+      })
+    }
+    fetchData();
+  }, [])
 
   return (
     <React.Fragment>
@@ -176,12 +173,12 @@ function ProfileBottomContent(props) {
       <CssBaseline />
       
       <Container maxWidth="lg" component="main">
-        <Grid container spacing={5} alignItems='stretch'>
+        <Grid container spacing={5} alignItems='centre'>
           <Grid
             item
             xs={12}
             sm={12}
-            md={4}
+            md={8}
           >
             <PlatformSetting/>
           </Grid>     
@@ -190,19 +187,26 @@ function ProfileBottomContent(props) {
             item
             xs={12}
             sm={12}
-            md={4}
+            md={8}
           >
-            <ProfileInfo profile={profile} tabchange={props.tabchange}/>
+            {
+              profile?(
+                <ProfileInfo profile={profile} tabchange={props.tabchange}/>
+              ):(
+                <Skeleton sx={{m : 2}} variant="rectangular" height={400}/>
+              )
+            }
+            
           </Grid>
 
-          <Grid
+          {/* <Grid
             item
             xs={12}
             sm={12}
             md={4}
           >
             <Conversations/>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </React.Fragment>
@@ -210,67 +214,3 @@ function ProfileBottomContent(props) {
 }
 
 export default ProfileBottomContent;
-
-
-// {tiers.map((tier) => (
-//   // Enterprise card is full width at sm breakpoint
-//   <Grid
-//     item
-//     key={tier.title}
-//     xs={12}
-//     sm={12}
-//     md={4}
-//   >
-//     <Card>
-//       <CardHeader
-//         title={tier.title}
-//         subheader={tier.subheader}
-//         titleTypographyProps={{ align: 'center' }}
-//         action={tier.title === 'Pro' ? <StarIcon /> : null}
-//         subheaderTypographyProps={{
-//           align: 'center',
-//         }}
-//         sx={{
-//           backgroundColor: (theme) =>
-//             theme.palette.mode === 'light'
-//               ? theme.palette.grey[200]
-//               : theme.palette.grey[700],
-//         }}
-//       />
-//       <CardContent>
-//         <Box
-//           sx={{
-//             display: 'flex',
-//             justifyContent: 'center',
-//             alignItems: 'baseline',
-//             mb: 2,
-//           }}
-//         >
-//           <Typography component="h2" variant="h3" color="text.primary">
-//             ${tier.price}
-//           </Typography>
-//           <Typography variant="h6" color="text.secondary">
-//             /mo
-//           </Typography>
-//         </Box>
-//         <ul>
-//           {tier.description.map((line) => (
-//             <Typography
-//               component="li"
-//               variant="subtitle1"
-//               align="center"
-//               key={line}
-//             >
-//               {line}
-//             </Typography>
-//           ))}
-//         </ul>
-//       </CardContent>
-//       <CardActions>
-//         <Button fullWidth variant={tier.buttonVariant}>
-//           {tier.buttonText}
-//         </Button>
-//       </CardActions>
-//     </Card>
-//   </Grid>
-// ))}

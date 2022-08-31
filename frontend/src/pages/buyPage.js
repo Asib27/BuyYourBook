@@ -13,130 +13,160 @@ import StripeCheckout from "react-stripe-checkout";
 import CartService from "../services/cart.service";
 import useSuccessSnackbarHelper from "../components/successSnackbar";
 import useFailedSnackbarHelper from "../components/failSnackbar";
+import UserService from "../services/user.service";
+import kConst from "../const";
+import axios from "axios";
 
 let addressResponse = "";
 
 const AddressCard = (props)=>{
+    const [userInfo, setUserInfo] = useState(undefined);
+    useEffect(()=>{
+        const fetchData = async()=>{
+            let data = await UserService.getCurrentUserFullInfo();
+            console.log(data);
+            setUserInfo(data);
+        }
+        fetchData();
+    }, [])
+
     return (
-        <Card sx={{width: '50%', m: 2, p: 2}}>
-            <Formik
-            initialValues={{email: '', name: '', streetAddress: '', district: '', country: '', phone: '', BackupPhoneNo: '', checked: false}}
-            validationSchema={Yup.object({
-              email: Yup.string().email('Invalid email address').required('Required'),
-              name: Yup.string().required('Required'),
-              streetAddress: Yup.string().required("Required"),
-              district: Yup.string().required("Required"),
-              country: Yup.string().required("Required"),
-              phone: Yup.string().required("Required"),
-            })}
-            onSubmit={(values, { setSubmitting }) => {
-                addressResponse = values;
-                console.log(addressResponse);
-                setSubmitting(false);
-            }}
-          >
-            {formic => (
-                <Form>
-                    <Field 
-                        component={TextField}
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus  
-                    />
-                    <ErrorMessage name='email'/>
+        <>
+        {
+            userInfo?(
+                <Card sx={{width: '50%', m: 2, p: 2}}>
+                    <Formik
+                    initialValues={{
+                        email: userInfo.email??'', 
+                        name: (!userInfo.first_name && userInfo.middle_name && userInfo.last_name) ? 'N/A' 
+                        : (userInfo.first_name??'') + ' ' + (userInfo.middle_name??'') + ' '+ (userInfo.last_name??''), 
+                        streetAddress: userInfo.location.street??'', 
+                        district: userInfo.location.district??'', 
+                        country: userInfo.location.country??"", 
+                        phone: userInfo.phone_number??'', 
+                        BackupPhoneNo: userInfo.backup_phone_number??'', 
+                        checked: false
+                    }}
+                    validationSchema={Yup.object({
+                    email: Yup.string().email('Invalid email address').required('Required'),
+                    name: Yup.string().required('Required'),
+                    streetAddress: Yup.string().required("Required"),
+                    district: Yup.string().required("Required"),
+                    country: Yup.string().required("Required"),
+                    phone: Yup.string().required("Required"),
+                    })}
+                    onSubmit={(values, { setSubmitting }) => {
+                        addressResponse = values;
+                        console.log(addressResponse);
+                        setSubmitting(false);
+                    }}
+                >
+                    {formic => (
+                        <Form>
+                            <Field 
+                                component={TextField}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                            />
 
-                    <Field
-                        component={TextField}
-                        margin="normal"
-                        fullWidth
-                        id="name"
-                        label="Full Name"
-                        name="name"
-                        autoComplete="cc-name"
-                    />
-                    <ErrorMessage name='name'/>
+                            <Field
+                                component={TextField}
+                                margin="normal"
+                                fullWidth
+                                id="name"
+                                label="Full Name"
+                                name="name"
+                                autoComplete="cc-name"
+                            />
+                            <ErrorMessage name='name'/>
 
-                    <Field
-                        component={TextField}
-                        margin="normal"
-                        fullWidth
-                        id="streetAddress"
-                        label="Street Address"
-                        name="streetAddress"
-                        autoComplete="street-address"
-                    />
-                    <ErrorMessage name='streetAddress'/>
+                            <Field
+                                component={TextField}
+                                margin="normal"
+                                fullWidth
+                                id="streetAddress"
+                                label="Street Address"
+                                name="streetAddress"
+                                autoComplete="street-address"
+                            />
+                            <ErrorMessage name='streetAddress'/>
 
-                    <Field
-                        component={TextField}
-                        margin="normal"
-                        fullWidth
-                        id="district"
-                        label="District"
-                        name="district"
-                        autoComplete="address-level1"
-                    />
-                    <ErrorMessage name='district'/>
+                            <Field
+                                component={TextField}
+                                margin="normal"
+                                fullWidth
+                                id="district"
+                                label="District"
+                                name="district"
+                                autoComplete="address-level1"
+                            />
+                            <ErrorMessage name='district'/>
 
-                    <Field
-                        component={TextField}
-                        margin="normal"
-                        fullWidth
-                        id="country"
-                        label="Country"
-                        name="country"
-                        autoComplete="country-name"
-                    />
-                    <ErrorMessage name='country'/>
+                            <Field
+                                component={TextField}
+                                margin="normal"
+                                fullWidth
+                                id="country"
+                                label="Country"
+                                name="country"
+                                autoComplete="country-name"
+                            />
+                            <ErrorMessage name='country'/>
 
-                    <Field
-                        component={TextField}
-                        type="tel"
-                        margin="normal"
-                        fullWidth
-                        id="phone"
-                        label="Phone Number"
-                        name="phone"
-                        autoComplete="tel"
-                    />
-                    <ErrorMessage name='phone'/>
+                            <Field
+                                component={TextField}
+                                type="tel"
+                                margin="normal"
+                                fullWidth
+                                id="phone"
+                                label="Phone Number"
+                                name="phone"
+                                autoComplete="tel"
+                            />
+                            <ErrorMessage name='phone'/>
 
-                    <Field
-                        component={TextField}
-                        type="tel"
-                        margin="normal"
-                        fullWidth
-                        id="backupPhone"
-                        label="Backup Phone Number"
-                        name="backupPhoneNo"
-                        autoComplete="tel"
-                    />
-                    <ErrorMessage name='backupPhoneNo'/>
+                            <Field
+                                component={TextField}
+                                type="tel"
+                                margin="normal"
+                                fullWidth
+                                id="backupPhone"
+                                label="Backup Phone Number"
+                                name="backupPhoneNo"
+                                autoComplete="tel"
+                            />
+                            <ErrorMessage name='backupPhoneNo'/>
 
-                    <Button
-                        type="submit"
-                        color={!formic.values.checked?"warning":"success"}
-                        fullWidth
-                        variant="contained"
-                        onClick={()=> formic.values.checked=true}
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        {!formic.values.checked?"Not Checked":"Checked"}
-                    </Button>
+                            <Button
+                                type="submit"
+                                color={!formic.values.checked?"warning":"success"}
+                                fullWidth
+                                variant="contained"
+                                onClick={()=> formic.values.checked=true}
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                {!formic.values.checked?"Not Checked":"Checked"}
+                            </Button>
 
-                </Form>
-            )}
-          </Formik>
-        </Card>
+                        </Form>
+                    )}
+                </Formik>
+                </Card>
+            ):(
+                <Skeleton sx={{m : 2}} variant="rectangular" height={500}/>
+            )
+        }
+        </>
+        
     )
 }
 
-const BuyCard = (props)=>{
+const BuyCard = ({update})=>{
     const { setOpenSnackbar, SnackbarHelper} = useSuccessSnackbarHelper("Info update succesfully");
     const { setFailOpenSnackbar, FailedSnackbarHelper} = useFailedSnackbarHelper("Coupon you entered maybe expired or invalid ");
     const [discountedPrice, setDiscountedPrice] = useState(0);
@@ -163,8 +193,19 @@ const BuyCard = (props)=>{
     }
 
     
-    const onToken = (val)=>{
-        console.log(val);
+    const onToken = async(token)=>{
+        console.log(token);
+
+        await axios.post(kConst.base_url + "/charge", "", {
+            headers: {
+                token: token.id,
+                amount: 500,
+        },}).then(() => {
+            alert("Payment Success");
+        }).catch((error) => {
+            alert(error);
+        });
+        
     }
 
     return (
@@ -241,8 +282,8 @@ const BuyCard = (props)=>{
 
                 <StripeCheckout 
                         name="BuyYourBook"
-                        description="Your total is BDT 20"
-                        amount={2000}
+                        description={"Your total is BDT " + discountedPrice}
+                        amount={discountedPrice * 100}
                         token={onToken}
                         stripeKey={KEY}
                         currency="BDT"
@@ -265,8 +306,8 @@ export default function BuyPage(props){
     const [updateNeeded, setUpdateNeeder] = useState(true);
     const [cart, setCart] = useState(undefined);
 
-    const removeAllClicked = ()=>{
-        CartService.emptyCart();
+    const removeAllClicked = async()=>{
+        await CartService.emptyCart();
         setUpdateNeeder(false);
     }
     
@@ -274,7 +315,9 @@ export default function BuyPage(props){
       const fetchData = async()=>{
         const data = await CartService.getCart();
         setCart(data);
+        setUpdateNeeder(true);
       }
+      console.log('a');
       fetchData();
     }, [updateNeeded])
     
@@ -285,7 +328,7 @@ export default function BuyPage(props){
                 <>
                 {
                     cart.map((book, idx)=>{
-                        return (<BookCardSmall key={idx} item={book}/>);
+                        return (<BookCardSmall key={idx} item={book} update={()=>setUpdateNeeder(!updateNeeded)}/>);
                     })
                 }
                 </>
@@ -315,7 +358,7 @@ export default function BuyPage(props){
             <Box sx={{display: 'flex'}}>
                 <AddressCard/>
                 <Box>
-                    <BuyCard/>
+                    <BuyCard update={()=>setUpdateNeeder(!updateNeeded)}/>
                 </Box>
             </Box>
         </Box>

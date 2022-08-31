@@ -107,6 +107,21 @@ const getAllUsers = async()=>{
     return data.data;
 }
 
+const getCurrentUserFullInfo = async()=>{
+    let data = await axiosGetUtil(API_KEY + '/currentUser');
+    return data.data;
+}
+
+const getFollowers = async()=>{
+    let data = await axiosGetUtil(API_KEY + '/get/followedBy');
+    return data.data;
+}
+
+const getFollowing = async()=>{
+    let data = await axiosGetUtil(API_KEY + '/get/whomFollows');
+    return data.data;
+}
+
 const UserService = {
     getUserData,
     getUsername,
@@ -119,7 +134,10 @@ const UserService = {
     getAboutInfo,
     updateLocation,
     getLocation,
-    getAllUsers
+    getAllUsers,
+    getCurrentUserFullInfo,
+    getFollowers,
+    getFollowing
 }
 
 export default UserService;
